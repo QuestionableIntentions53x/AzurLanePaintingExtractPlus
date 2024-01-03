@@ -4,3 +4,6 @@ __pycache__/
 core/assets/*.py
 core/assets/*.txt
 core/assets/*.spec
+build/
+dist/
+main.spec

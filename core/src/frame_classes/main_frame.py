@@ -272,7 +272,7 @@ class MainFrame(Mf):
                                 wildcard="*.png",style=wx.DD_DEFAULT_STYLE)
         if dialog.ShowModal() == wx.ID_OK:
             success, info = ImageWork.deconstruct_tool(target, dialog.GetPath())
-            success.format.m_staticText_info.SetLabel(info)
+            # success.format.m_staticText_info.SetLabel(info)
             
         return
 

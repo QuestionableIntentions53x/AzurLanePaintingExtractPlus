@@ -1,47 +1,69 @@
+# NOTE:
+
+## Current State
+
+This rework is still in progress and many of the proposed features are currently non-functional
+The translations were done by Google, and haven't been cleaned up yet, but if you're here for the method of converting from raw texture files to pieced together pngs and back again, then the process is as follows:
+1. Go to: `/storage/emulated/0/Android/data/com.YoStarEN.AzurLane/files/AssetBundles/painting/...` (see below for conversion between english ship names and file names) and grab the `_tex` files associated with it*.
+2. Follow the steps found in HELP.md for processing and importing images
+3. After editing the texture to your liking or if you have a new image you want to convert to a texture: Expand the Funtions section of the tree and select the final option, then navigate to the .png you want to convert. The output file will be placed in the same folder as the texture file with the word `texture` appended to the end.
+4. To recombine the texture and mesh files you need to use [UABE](https://github.com/nesrak1/UABEA). Drag the `_tex` blob file into UABE and click "save to memory", then click "info", then select the file of type "texture2D", then in the right menu click "Plugins" then select "Edit Texture" then click "Ok", click "Load" at the bottom of the menu and navigate to the output file prodced in step 4. Press `CTRL+S` and exit the info menu, now press "file" in the upper ribbon menu and "save as...", ensure the name of the file is identical to the original.
+5. The final step is to copy paste the modded texture file to the game files
+6. Enjoy!
+
+## Future Development
+
+On top of revamping the original features, I plan to turn the asset conversion and editing process into a library
+Better localization will come in the future, for now if you need to find the blob file name from the ship's English name go [here](https://raw.githubusercontent.com/AzurLaneTools/AzurLaneData/main/EN/ShareCfg/ship_skin_template.json)
+
+## Contributions
+
+Contributions should wait until it reaches a more stable state, stay tuned
+
 # AzurLanePaintingExtract-v1.0
-### 工具：
+### Tools:
 ---------------------
-| 工具 | 介绍
+| Tool | Introduction |
 |:--:|:--|
-| [asset studio](https://github.com/Perfare/AssetStudio) | 居家旅行常备的解包工具 |
-| [UABE](https://github.com/DerPopo/UABE) | 可以获取Path_ID，还可以进行[Unity](https://unity.com/)封包 |
+| [asset studio](https://github.com/Perfare/AssetStudio) | Unpacking tool essential for home travel |
+| [UABE](https://github.com/DerPopo/UABE) | Retrieves Path_ID, can also package in [Unity](https://unity.com/) |
 ------------------
-### 功能介绍
+### Features:
 ------------------
-|功能|适用范围|效果|需求|
+| Feature | Applicability | Effect | Requirements |
 |:--:|:-----:|:---:|:--:|
-| 基本立绘处理功能 | 针对[碧蓝航线](https://game.bilibili.com/blhx/)角色立绘，是本脚本的核心功能 | 将破碎的原始解包立绘恢复原样 | 至少一张Texure2D（.png），至少一个Mesh(.obj) |
-| 立绘附加表情功能 | 针对[碧蓝航线](https://game.bilibili.com/blhx/)角色差分表情，和部分立绘没有头而开发的功能 | 能为立绘附加面部表情（正在考虑用Path_ID进行匹配） | 可以为一个角色单个或组合进行附加表情 | 符合基本立绘处理功能的要求即可 |
-| Q版（[Spine](http://zh.esotericsoftware.com/)）小人切割 | 适用所有的atlas切割（[Spine](http://zh.esotericsoftware.com/)） | 将单张的贴图切割成图片组 | 至少一张Texuture2D（.png）和一个Atlas（.atlas|.atlas.txt）|
-| Sprite切割 | 针对[Unity](https://unity.com/)的Sprite的切割功能，理论上适用所有Unity Sprite对象 | 参考被切割图片PathID和Sprite的Dump文件，切割原始图片，获得图片组 | 至少一个Texture2D（.png）,一个Dump(.txt) |
+| Basic character painting processing | Core functionality for character paintings in [Azur Lane](https://game.bilibili.com/blhx/) | Restores broken original unpacked character paintings | At least one Texure2D (.png), at least one Mesh (.obj) |
+| Additional expressions for character paintings | Functionality for differential expressions of [Azur Lane](https://game.bilibili.com/blhx/) characters and characters without heads | Attaches facial expressions to character paintings (considering using Path_ID for matching) | Can be applied to a single character or a combination, meets the requirements of basic character painting processing |
+| Chibi ([Spine](http://zh.esotericsoftware.com/)) character cutting | Applicable to all [Spine](http://zh.esotericsoftware.com/) atlas cutting | Cuts a single texture into a group of images | At least one Texuture2D (.png) and one Atlas (.atlas | .atlas.txt) |
+| Sprite cutting | Functionality for cutting [Unity](https://unity.com/) sprites, theoretically applicable to all Unity Sprite objects | Cuts the original image based on the reference PathID and Sprite Dump file, obtaining a group of images | At least one Texture2D (.png), one Dump (.txt) |
 ------------
-### 历次更新介绍
-#### 1.X版本
-* [【碧蓝航线】立绘辅助处理工具-1.4](https://www.bilibili.com/read/cv5048786)
-* [【碧蓝航线】立绘处理辅助工具v1.2更新](https://www.bilibili.com/read/cv3983757)
-* [【碧蓝航线】立绘导出工具-1.0重制版](https://www.bilibili.com/read/cv2801922)
+### Update History:
+#### Version 1.X
+* [【Azur Lane】Character Painting Processing Tool-1.4](https://www.bilibili.com/read/cv5048786)
+* [【Azur Lane】Character Painting Processing Tool v1.2 Update](https://www.bilibili.com/read/cv3983757)
+* [【Azur Lane】Character Painting Export Tool-1.0 Remake](https://www.bilibili.com/read/cv2801922)
 --------------------------
-#### 0.X版本
-* [【碧蓝航线】AzurLane-PaintingExtract v 0.7.0更新内容](https://www.bilibili.com/read/cv1786736)
-* [【碧蓝航线】立绘，spine小人，Live2D](https://www.bilibili.com/read/cv1566510)
-* [【碧蓝航线】立绘还原程序 v-0.6.0更新](https://www.bilibili.com/read/preview/1439259)
-* [碧蓝航线立绘还原更新-v-0.2.0](https://www.bilibili.com/read/cv1316278)
-* [碧蓝航线立绘还原程序更新](https://www.bilibili.com/read/cv1127720)
-* [碧蓝航线立绘还原程序（GUI版本）更新](https://www.bilibili.com/read/cv1019910)
-* [碧蓝航线立绘还原程序（GUI版本）](https://www.bilibili.com/read/cv1013553)
-* [碧蓝航线立绘还原更新（批处理）](https://www.bilibili.com/read/cv941333)
-* [碧蓝航线立绘还原程序更新（1）](https://www.bilibili.com/read/cv936784)
-* [碧蓝航线立绘还原程序更新](https://www.bilibili.com/read/cv933308)
-* [AzurLanePaintingRestore更新](https://www.bilibili.com/read/cv911094)
-* [ AzurLinePaintingRestore更新](https://www.bilibili.com/read/cv893994)
-* [【碧蓝航线】立绘还原程序更新](https://www.bilibili.com/read/cv886956)
+#### Version 0.X
+* [【Azur Lane】AzurLane-PaintingExtract v 0.7.0 Update](https://www.bilibili.com/read/cv1786736)
+* [【Azur Lane】Character Painting, Spine Characters, Live2D](https://www.bilibili.com/read/cv1566510)
+* [【Azur Lane】Character Painting Restoration Program v-0.6.0 Update](https://www.bilibili.com/read/preview/1439259)
+* [Azur Lane Character Painting Restoration Update-v-0.2.0](https://www.bilibili.com/read/cv1316278)
+* [Azur Lane Character Painting Restoration Program Update](https://www.bilibili.com/read/cv1127720)
+* [Azur Lane Character Painting Restoration Program (GUI Version) Update](https://www.bilibili.com/read/cv1019910)
+* [Azur Lane Character Painting Restoration Program (GUI Version)](https://www.bilibili.com/read/cv1013553)
+* [Azur Lane Character Painting Restoration Update (Batch Processing)](https://www.bilibili.com/read/cv941333)
+* [Azur Lane Character Painting Restoration Program Update (1)](https://www.bilibili.com/read/cv936784)
+* [Azur Lane Character Painting Restoration Program Update](https://www.bilibili.com/read/cv933308)
+* [AzurLanePaintingRestore Update](https://www.bilibili.com/read/cv911094)
+* [AzurLinePaintingRestore Update](https://www.bilibili.com/read/cv893994)
+* [【Azur Lane】Character Painting Restoration Program Update](https://www.bilibili.com/read/cv886956)
 ---------------------
-#### 教程
-* [【碧蓝航线】如何手动挖出舰娘的立绘](https://www.bilibili.com/read/cv1330829)
-* [ 如何挖出碧蓝航线的立绘教程（简单版）](https://www.bilibili.com/read/cv894737)
-* [ 如何手动挖出碧蓝航线的立绘](https://www.bilibili.com/read/cv565639)
+#### Tutorials
+* [【Azur Lane】How to Manually Extract Ship Girl Paintings](https://www.bilibili.com/read/cv1330829)
+* [How to Extract Azur Lane Paintings Tutorial (Simple Version)](https://www.bilibili.com/read/cv894737)
+* [How to Manually Extract Azur Lane Paintings](https://www.bilibili.com/read/cv565639)
 ---------------------
-#### Bigfun页面
-* [正在更新中](https://www.bigfun.cn/post/219941)
+#### Bigfun Page
+* [Currently being updated](https://www.bigfun.cn/post/219941)
 ---------------------
 ![image](https://i0.hdslb.com/bfs/bigfun/69c19a99f508849b846931cedd339d8034a9e18a.png@760w_1o_1g)
