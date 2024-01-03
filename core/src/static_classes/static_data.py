@@ -60,6 +60,10 @@ class GlobalData:
     def at_change_local(self):
         return 7
 
+    @property
+    def at_import_sprite(self):
+        return 8
+
     # tree_filter
     @property
     def tf_all(self):

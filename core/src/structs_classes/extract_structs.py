@@ -54,7 +54,8 @@ class PerInfo(BasicInfo):
             "split_only",
             "remove_item",
             "sprite_spilt",
-            "change_local"
+            "change_local",
+            "import_sprite"
         ]
         # whether to save as Chinese
         self._is_save_as_cn = True
@@ -183,6 +184,10 @@ class PerInfo(BasicInfo):
         change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root,
                                                                                       "Modify localization")
         tree.SetItemTextColour(change_local, wx.Colour(248, 44, 255))
+        
+        import_sprite = self.action_group[self.data.at_import_sprite] = tree.AppendItem(action_root,
+                                                                                      "Convert PNG to tex")
+        tree.SetItemTextColour(import_sprite, wx.Colour(248, 44, 200))
 
     def append_to_tree(self, tree: wx.TreeCtrl, tree_root: wx.TreeItemId):
         """

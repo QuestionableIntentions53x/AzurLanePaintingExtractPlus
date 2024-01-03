@@ -18,6 +18,7 @@ from core.src.static_classes.search_order import SearchOrder
 from core.src.static_classes.static_data import GlobalData
 from core.src.structs_classes.drop_order import DropOrder
 from core.src.structs_classes.extract_structs import PerWorkList
+from core.src.structs_classes.extract_structs import PerInfo
 from core.src.thread_classes.extract_thread import WorkThread, WatchDogThread, SideWorkThread
 from core.src.thread_classes.quick_view import QuickRestore
 
@@ -29,15 +30,19 @@ class MainFrame(Mf):
 
     def __init__(self, parent, path=os.getcwd()):
         super(MainFrame, self).__init__(parent)
+
         # Constant parameter storage class
         self.data = GlobalData()
+
         # Add icon
         icon = wx.Icon(os.path.join(path, "core\\assets\\sf_icon.ico"))
         self.SetIcon(icon)
+
         # Shipgirl name file
         self.names = {}
         with open(os.path.join(path, "core\\assets\\names.json"), "r")as file:
             self.names = json.load(file)
+
         # Settings file
         with open(os.path.join(path, "core\\assets\\setting.json"), 'r')as file:
             self.setting_info = json.load(file)
@@ -45,18 +50,24 @@ class MainFrame(Mf):
             self.height_setting = json.load(file)
 
         self.root = self.m_treeCtrl_info.AddRoot(u"azur lane")
-        #Data storage structure example
+
+        # Final processing work list
         self.painting_work = PerWorkList(mesh_match=self.height_setting[self.data.sk_mash_match],
                                          texture_match=self.height_setting[self.data.sk_texture_match],
                                          is_ignore_case=self.setting_info[self.data.sk_ignore_case])
+        
+        # UI processing work list
         self.view_work = PerWorkList()
+
         # Find the information of the tree index, pos->[single true, false in the list]; type_is->type [texture, mesh], name->object at the clicked position
         self.is_single, self.type_is, self.name = None, None, None
         self.index = -1
+
         # Set drag binding
         self.drop = DropOrder(self.painting_work,
                               self.view_work, self, self.get_input_data)
         self.m_treeCtrl_info.SetDropTarget(self.drop)
+
         # Vertical painting restoration thread
         self.thread_quick = None
         self.thread_main = None
@@ -65,18 +76,23 @@ class MainFrame(Mf):
             "thread-1", "thread-2", "thread-3", "thread-4")
         self.thread_watch_dog = None
         self.thread_side_work = None
+
         # Thread lock, queue
         self.locker = threading.Lock()
         self.work_queue = queue.Queue()
         self.err_queue = queue.Queue(10)
+
         # Enter the exit state
         self.enter_exit = False
+
         # Save path, script path
         self.save_path = ""
         self.work_path = path
+
         # window (only one)
         self.__dialog = None
-        #, search, filter
+
+        # search, filter
         self.search_type = False
         self.filter_type = False
 
@@ -100,12 +116,14 @@ class MainFrame(Mf):
 
         app.MainLoop()
 
+    # Setter, passed as a parameter
     def get_input_data(self, view_work, painting_group):
         self.view_work = view_work
         #self.painting_work = painting_group
 
-    # The following are auxiliary functions, new parts
-    def change_path(self, is_single, type_is, target, index):
+    """ COMPONENT MODIFICATION """
+
+    def change_path(self, is_single: bool, type_is: bool, target: PerInfo, index: int):
         """
         Modify the method pointing to the file
         :param index:
@@ -147,8 +165,9 @@ class MainFrame(Mf):
                 target.key, wx.Colour(255, 255, 255))
         return True
 
-    # action response function
-    def independent_target(self, target):
+    """ EVENT FUNCTIONS """
+
+    def independent_target(self, target: PerInfo):
         """
         Create a new independent target (create a new independent object that is the same as the target)
         :param target: the target to be created
@@ -168,7 +187,7 @@ class MainFrame(Mf):
             else:
                 target.independent(name, self.m_treeCtrl_info, self.root)
 
-    def face_match_target(self, target):
+    def face_match_target(self, target: PerInfo):
         if not target.is_able_work:
             self.m_staticText_info.SetLabel("Head change failed! Must be a restoreable object")
             return
@@ -183,7 +202,7 @@ class MainFrame(Mf):
             self.__dialog = FaceMatchFrame(self, target, type_is)
             self.__dialog.ShowModal()
 
-    def atlas_split_target(self, target):
+    def atlas_split_target(self, target: PerInfo):
         if not os.path.isfile(target.tex_path):
             self.m_staticText_info.SetLabel("Cutting failed, there must be an available Texture2D file")
             return
@@ -192,14 +211,14 @@ class MainFrame(Mf):
             self.__dialog = AtlasSpiltFrame(self, target)
             self.__dialog.ShowModal()
 
-    def set_able_target(self, target):
+    def set_able_target(self, target: PerInfo):
         target.transform_able()
         self.m_treeCtrl_info.DeleteChildren(target.tree_ID)
         target.append_item_tree(self.m_treeCtrl_info)
         self.m_staticText_info.SetLabel(
             f"{target.cn_name} has been converted and is now {target.must_able}")
 
-    def remove_target(self, target):
+    def remove_target(self, target: PerInfo):
         info = wx.MessageBox(
             f"Are you sure you want to remove\n{target}\n?", 'Information', wx.YES_NO | wx.ICON_INFORMATION)
         if info == wx.YES:
@@ -208,7 +227,7 @@ class MainFrame(Mf):
             if self.search_type or self.filter_type:
                 self.select_data.remove([target])
 
-    def split_target_only(self, target):
+    def split_target_only(self, target: PerInfo):
         if not target.is_able_work:
             self.m_staticText_info.SetLabel(f"{target} cannot be cut and is a non-reducible object")
             return
@@ -223,7 +242,7 @@ class MainFrame(Mf):
                 self.m_staticText_info.SetLabel(
                     f"{target.cn_name} cutting completed, saved in {path}")
 
-    def sprite_split(self, target):
+    def sprite_split(self, target: PerInfo):
         if not os.path.isfile(target.tex_path):
             self.m_staticText_info.SetLabel(f"{target} cannot be cut, at least one Texture2D is required")
             return
@@ -231,7 +250,7 @@ class MainFrame(Mf):
         self.__dialog = SpriteSplitFrame(self, target)
         self.__dialog.ShowModal()
 
-    def change_local(self, target):
+    def change_local(self, target: PerInfo):
         src_name = target.name
         local_name = target.cn_name
 
@@ -247,7 +266,17 @@ class MainFrame(Mf):
                 self.names[src_name] = data
                 self.refeash(None)
 
-    # The following are the original functions
+    def import_png(self, target: PerInfo):
+        
+        dialog = wx.FileDialog(parent=self, message="PNG Path", defaultDir=target.tex_path[:target.tex_path.rfind('\\')],
+                                wildcard="*.png",style=wx.DD_DEFAULT_STYLE)
+        if dialog.ShowModal() == wx.ID_OK:
+            success, info = ImageWork.deconstruct_tool(target, dialog.GetPath())
+            success.format.m_staticText_info.SetLabel(info)
+            
+        return
+
+    """ CONTROL FLOW FUNCTIONS """
 
     def restart(self, size, able, unable):
         """
@@ -273,7 +302,8 @@ class MainFrame(Mf):
 
         self.m_gauge_state.SetValue(0)
 
-    # export
+    """ FILE EXPORT FUNCTIONS """
+
     def export_choice(self):
         """
         Export selections
@@ -372,7 +402,8 @@ class MainFrame(Mf):
         if self.setting_info[data.sk_finish_exit]:
             self.exit()
 
-   #The following is the callback function
+    """ CALLBACK FUNCTIONS """
+
     def on_info_select(self, event):
         """
         tree element selection response method
@@ -467,6 +498,8 @@ class MainFrame(Mf):
                             self.sprite_split(target)
                         if type_is == self.data.at_change_local:
                             self.change_local(target)
+                        if type_is == self.data.at_import_sprite:
+                            self.import_png(target)
 
     def choice_file(self, event):
         #Select the corresponding file

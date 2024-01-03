@@ -133,8 +133,6 @@ class ImageWork(object):
         division = ImageWork.division_builder(list(draw_pic), list(tex_pos), img)
         restore = (map(division, print_pos))
         
-        # print(list(restore))
-
         return restore
 
     @staticmethod
@@ -199,6 +197,61 @@ class ImageWork(object):
         
         return restore, pic
     
+    @staticmethod
+    def az_paint_deconstruct(mesh_path: str, tex_path: str, img_path: str, must_able=False):
+        """
+        A function that scrambles a given string using the provided mesh and texture
+        :param must_able: If the image is unable to be converted, just return the image and do not perform any action
+        :param mesh_path: Absolute path to the mesh file
+        :param tex_path: Absolute path to the texture file
+        :return: pic_out [PIL.Image] final scrambled image 
+        """
+        # Get the components of the image
+        restore, pic = ImageWork.deconstruct_only(mesh_path, tex_path, img_path, must_able)
+        if must_able:
+            return restore
+        # Assemble by passing the draw function along with the image components and output image
+        pic_out = reduce(ImageWork.draw, restore, pic)
+
+        return pic_out
+
+    @staticmethod
+    def deconstruct_only(mesh_path: str, tex_path: str, img_path: str, must_able=False):
+        """
+        Revert the image to it's original state
+        :param mesh_path: The absolute path to the mesh (.obj) file
+        :param tex_path: The absolute path to the texture (.png) file
+        :param must_able: returns the texture as an image as is
+        :returns:   restore: A map of the split image segments paired with the position they need to be drawn to
+                    pic: The propery sized output image
+        """
+        
+        # img: Restored image
+        img = PIL.Image.open(img_path)
+        
+        if must_able:
+            return img, None
+        
+        # img: Raw scrambled texture
+        texture = PIL.Image.open(tex_path)
+        
+        # Get the current four corners of the texture (tex_pos) and the four corners they will be moved to (draw_pic)
+        # Print pos is a tuple of image source and destination corners
+        draw_pic, tex_pos, print_pos = ImageWork.file_analyze(texture.size, mesh_path)
+        draw_pic = list(draw_pic)
+
+        # Create a new canvas
+        pic = PIL.Image.new("RGBA", texture.size, (255, 255, 255, 0))
+        
+        # TODO: Skip every other print_pos entry since the data is redundant 
+        # The draw_pic positions are stored with their y values inverted, so they need to be inverted
+        draw_pic = (map(lambda x: [(x[0]), (img.size[1] - x[1])], draw_pic))
+
+        # Cut
+        restore = ImageWork.spilt_texture(tex_pos, draw_pic, print_pos, texture.size[1], img)
+        
+        return restore, pic
+
     """ IMAGE RESTORATION """
 
     @staticmethod
@@ -246,6 +299,58 @@ class ImageWork(object):
         #TODO: Make this the default version of this function and move the save function to PerInfo
         pic = ImageWork.az_paint_restore(mesh_path, pic_path)
         return ImageWork.pic_size_transform(pic, size)
+
+    """ IMAGE DECONSTRUCTION """
+
+    @staticmethod
+    def deconstruct_tool(now_info: PerInfo, pic_path: str):
+        """
+        Scrambles a provided asset and stores it in an output directory
+        :param now_info: The asset's parsed information
+        :param str: The absolute path to the overwriting asset
+        :return:    success: True if the image was successfully restored
+                    messsage: Info about the process
+        """
+        try:
+            # Check the status of the asset
+            #  If it is unable to perform a restoration will return the raw texture as an image
+            must_able = not now_info.get_is_able_work() and now_info.must_able
+            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, must_able)
+            pic.save(now_info.tex_path.removesuffix(".png") + "_texture.png")
+        except RuntimeError as info:
+            # System error
+            return False, str(info)
+        except ValueError as info:
+            # Math error
+            return False, "math" + str(info)
+        else:
+            # Successfull restoration
+            return True, "Successfully saved to: %s" % now_info.tex_path.removesuffix(".png") + "_texture.png"
+
+    @staticmethod
+    def deconstruct_tool_no_save(now_info: PerInfo, pic_path: str):
+        """
+        Scrambles a provided asset and stores it in an output directory
+        :param now_info: The asset's parsed information
+        :param str: The absolute path to the overwriting asset
+        :return:    success: True if the image was successfully restored
+                    messsage: Info about the process
+        """
+        try:
+            # Check the status of the asset
+            #  If it is unable to perform a restoration will return the raw texture as an image
+            must_able = not now_info.get_is_able_work() and now_info.must_able
+            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, must_able)
+            pic.save(now_info.save_path)
+        except RuntimeError as info:
+            # System error
+            return False, str(info)
+        except ValueError as info:
+            # Math error
+            return False, "math" + str(info)
+        else:
+            # Successfull restoration
+            return True, "Successfully saved to: %s" % now_info.save_path
 
     """ IMAGE EDITING """
 
