@@ -6,21 +6,18 @@ from multiprocessing import connection, Pool, Pipe
 from core.src.static_classes.image_deal import ImageWork
 from core.src.structs_classes.extract_structs import PerInfo
 
-
 def worker(target, save, frame, data, count, size, pipe: connection.Connection):
-    id=os.getpid()
-    print(id,count)
+    process_id = os.getpid()
+    print(process_id, count)
     try:
-
         now_info: PerInfo = target
-        frame.m_staticText_info.SetLabel("当前第%d个！为：%s 类型-直接还原" % (count, now_info.cn_name))
+        frame.m_staticText_info.SetLabel("Current %dth! As: %s Type - Direct Restoration" % (count, now_info.cn_name))
 
         now_info.is_save_as_cn = frame.setting[data.sk_use_cn_name]
 
-        # 文件分类部分
+        # File classification section
         if frame.setting[data.sk_output_group] == data.feg_do_no_group:
             save_path = save
-
         elif frame.setting[data.sk_output_group] == data.feg_by_type:
             pattern_skin = data.fp_skin
             pattern_power = data.fp_build_up
@@ -28,27 +25,19 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
             pattern_young = data.fp_young
             pattern_self = data.fp_default_skin
             if pattern_skin.match(now_info.name) is not None:
-
-                save_path = f"{save}\\皮肤"
-
+                save_path = f"{save}\\Skin"
             elif pattern_marry.match(now_info.name) is not None:
-                save_path = f"{save}\\婚纱"
-
+                save_path = f"{save}\\Wedding"
             elif pattern_power.match(now_info.name) is not None:
-                save_path = f"{save}\\改造"
-
+                save_path = f"{save}\\Transformation"
             elif pattern_self.match(now_info.name) is not None:
-                save_path = f"{save}\\原皮"
-
+                save_path = f"{save}\\OriginalSkin"
             elif pattern_young.match(now_info.name) is not None:
-                save_path = f"{save}\\幼女化"
-
+                save_path = f"{save}\\Youngify"
             elif data.fp_u_skin.match(now_info.name) is not None:
-                save_path = f"{save}\\μ兵装"
-
+                save_path = f"{save}\\MicroArmor"
             else:
-                save_path = f"{save}\\其他"
-
+                save_path = f"{save}\\Other"
         elif frame.setting[data.sk_output_group] == data.feg_by_name:
             val = re.match(r'^(.+)(_[hg\d])$', now_info.name)
             if val is not None:
@@ -66,17 +55,13 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
                     val = now_info.cn_name
                 else:
                     val = now_info.name
-
             save_path = f"{save}\\{val}"
-
         elif frame.setting[data.sk_output_group] == data.feg_by_is_able:
-            save_path = f"{save}\\{'还原'}"
-
+            save_path = f"{save}\\Restore"
         else:
             save_path = save
 
         os.makedirs(save_path, exist_ok=True)
-
         now_info.add_save(save_path)
 
         is_good, info = ImageWork.restore_tool(now_info)
@@ -86,12 +71,11 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
         val = round(100 * (count / size))
         frame.m_gauge_state.SetValue(val)
     except KeyError as info:
-        frame.m_staticText_info.SetLabel(f"处理出错！，为{info}")
+        frame.m_staticText_info.SetLabel(f"Processing error! For {info}")
         print(info)
-        pipe.send((info, id))
+        pipe.send((info, process_id))
 
     time.sleep(0.5)
-
 
 def apply_work(target_group, save_path, frame, data):
     pool = Pool()
@@ -102,9 +86,8 @@ def apply_work(target_group, save_path, frame, data):
     for target in target_group:
         print(count)
         print(target)
-        pool.apply_async(worker,args=(target, save_path, frame, data, count, size, sub_pipe,))
+        pool.apply_async(worker, args=(target, save_path, frame, data, count, size, sub_pipe,))
         count += 1
-
 
     pool.close()
     pool.join()

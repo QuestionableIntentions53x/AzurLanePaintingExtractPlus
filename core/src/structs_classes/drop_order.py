@@ -18,12 +18,13 @@ class DropOrder(wx.FileDropTarget):
 
         self.parent = parent
         self.data = GlobalData()
-
+    
+    # Load files that have been dragged and dropped onto the screen
     def OnDropFiles(self, x, y, filenames):
         file_names = filenames
         try:
             file_names = list(file_names)
-            self.frame.m_staticText_info.SetLabel(f"开始导入{len(filenames)}个文件")
+            self.frame.m_staticText_info.SetLabel(f"Start importing {len(filenames)} files")
 
             dir_name = (filter(lambda temple_value: not os.path.isfile(temple_value), file_names))
             dir_name = map(lambda temple_value: FileFilter.all_file(temple_value), dir_name)

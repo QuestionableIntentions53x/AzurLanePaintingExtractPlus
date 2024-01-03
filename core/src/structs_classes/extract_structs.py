@@ -17,23 +17,23 @@ class PerInfo(BasicInfo):
         self.sub_data = 1
 
         self.tex_step = 2
-        self.mesh_step=2
+        self.mesh_step = 2
         self.data = GlobalData()
-        # tree储存结构组
+        # tree storage structure group
         self._tex_path = "Empty"
         self.more_tex = ["Empty"]
         self._mesh_path = "Empty"
         self.more_mesh = ["Empty"]
-        # 目标文件位置
+        # target file location
         self.lay_in = ""
-        # 是否可以使用还原
+        # whether restoration is possible
         self._is_able_work = False
-        # 导出目标位置
+        # export target location
         self._save_path: str = ""
-        # 中文名称
+        # Chinese name
         self.cn_name = val
         self.has_cn = has_cn
-        # 父组件
+        # parent component
         self.parent = None
 
         self.must_able = False
@@ -56,7 +56,7 @@ class PerInfo(BasicInfo):
             "sprite_spilt",
             "change_local"
         ]
-        # 是否以中文保存
+        # whether to save as Chinese
         self._is_save_as_cn = True
 
     def __contains__(self, item):
@@ -99,7 +99,6 @@ class PerInfo(BasicInfo):
         if self._is_save_as_cn:
             self._save_path = os.path.join(value, self.cn_name + ".png")
         else:
-
             self._save_path = os.path.join(value, self.name + ".png")
 
     @property
@@ -131,58 +130,65 @@ class PerInfo(BasicInfo):
         self._save_path = path
 
     def append_item_tree(self, tree: wx.TreeCtrl):
-        # 名称
-        self.key = key = tree.AppendItem(self.tree_ID, f"名称：{self.cn_name}")
+        # name
+        self.key = key = tree.AppendItem(self.tree_ID, f"Name: {self.cn_name}")
         if self.is_able_work:
             tree.SetItemTextColour(key, wx.Colour(253, 86, 255))
-        tree.AppendItem(self.tree_ID, f"索引名称：{self.name}")
+        tree.AppendItem(self.tree_ID, f"Index name: {self.name}")
         # texture
-        self.tex_id = tree.AppendItem(self.tree_ID, f"Texture文件路径：{self.tex_path}")
+        self.tex_id = tree.AppendItem(self.tree_ID, f"Texture file path: {self.tex_path}")
 
-        more_tex_id = tree.AppendItem(self.tree_ID, f"其他Texture路径({len(self.more_tex)})")
+        more_tex_id = tree.AppendItem(self.tree_ID, f"Other Texture path({len(self.more_tex)})")
         for each_path in self.more_tex:
             val = tree.AppendItem(more_tex_id, each_path)
             self.more_tex_per_id.append(val)
         # mesh
-        self.mesh_id = tree.AppendItem(self.tree_ID, f"Mesh文件路径：{self.mesh_path}")
+        self.mesh_id = tree.AppendItem(self.tree_ID, f"Mesh file path: {self.mesh_path}")
 
-        more_mesh_id = tree.AppendItem(self.tree_ID, f"其他Mesh路径({len(self.more_mesh)})")
+        more_mesh_id = tree.AppendItem(self.tree_ID, f"Other Mesh path({len(self.more_mesh)})")
         for each_path in self.more_mesh:
             val = tree.AppendItem(more_mesh_id, each_path)
             self.more_mesh_per_id.append(val)
 
-        action_root = tree.AppendItem(self.tree_ID, "功能按键")
-        # 功能键
-        independent = self.action_group[self.data.at_independent] = tree.AppendItem(action_root, "将当前的组合独立")
+        action_root = tree.AppendItem(self.tree_ID, "Function Button")
+        # Function keys
+        independent = self.action_group[self.data.at_independent] = tree.AppendItem(action_root,
+                                                                                    "Make the current group independent")
         tree.SetItemTextColour(independent, wx.Colour(255, 0, 166))
 
-        face_match = self.action_group[self.data.at_face_match] = tree.AppendItem(action_root, "为当前立绘添加附加表情")
+        face_match = self.action_group[self.data.at_face_match] = tree.AppendItem(action_root,
+                                                                                    "Add an additional expression to the current vertical painting")
         tree.SetItemTextColour(face_match, wx.Colour(0, 16, 166))
 
-        atlas_spilt = self.action_group[self.data.at_atlas_split] = tree.AppendItem(action_root, "进行Q版小人切割")
+        atlas_spilt = self.action_group[self.data.at_atlas_split] = tree.AppendItem(action_root,
+                                                                                    "Cut the Q version of the villain")
         tree.SetItemTextColour(atlas_spilt, wx.Colour(140, 0, 166))
 
-        sprite_spilt = self.action_group[self.data.at_sprite_split] = tree.AppendItem(action_root, "进行Sprite切割 ")
+        sprite_spilt = self.action_group[self.data.at_sprite_split] = tree.AppendItem(action_root,
+                                                                                      "Sprite cutting")
         tree.SetItemTextColour(sprite_spilt, wx.Colour(248, 40, 255))
 
         set_able = self.action_group[self.data.at_set_able] = tree.AppendItem(action_root,
-                                                                              f"强制转换为可还原状态【当前{self.must_able}】")
+                                                                              f"Force to a reversible state [current {self.must_able}]")
         tree.SetItemTextColour(set_able, wx.Colour(255, 177, 166))
 
-        split_only = self.action_group[self.data.at_split_only] = tree.AppendItem(action_root, "仅进行立绘还原切割 ")
+        split_only = self.action_group[self.data.at_split_only] = tree.AppendItem(action_root,
+                                                                                  "Only vertical rendering reduction cutting")
         tree.SetItemTextColour(split_only, wx.Colour(248, 66, 255))
 
-        remove_item = self.action_group[self.data.at_remove_item] = tree.AppendItem(action_root, "删除该元素 ")
+        remove_item = self.action_group[self.data.at_remove_item] = tree.AppendItem(action_root,
+                                                                                    "Remove the element ")
         tree.SetItemTextColour(remove_item, wx.Colour(248, 0, 255))
-        
-        change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root, "修改本地化 ")
+
+        change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root,
+                                                                                      "Modify localization")
         tree.SetItemTextColour(change_local, wx.Colour(248, 44, 255))
 
     def append_to_tree(self, tree: wx.TreeCtrl, tree_root: wx.TreeItemId):
         """
-        添加到树，构建tree列表
-        :param tree: tree 对象
-        :param tree_root: 根id
+        Add to tree, build tree list
+        :param tree: tree object
+        :param tree_root: root id
         :return:
         """
         self.more_mesh_per_id.clear()
@@ -193,23 +199,23 @@ class PerInfo(BasicInfo):
 
     def get_select(self, type_is: bool):
         """
-        获取选中的列表
-        :param type_is: true ：texture，false：mesh
-        :return: list，选中的列表
+        Get selected list
+        :param type_is: true: texture, false: mesh
+        :return: list, selected list
         """
         if type_is:
             return self.more_tex
         else:
             return self.more_mesh
 
-    # 路径设置相关
+    # Path setting related
     def set_tex(self, index):
         self.tex_path = self.more_tex[index]
-        return self.tex_id, f"Texture文件路径：{self.tex_path}"
+        return self.tex_id, f"Texture file path: {self.tex_path}"
 
     def set_mesh(self, index):
         self.mesh_path = self.more_mesh[index]
-        return self.mesh_id, f"Mesh文件路径：{self.mesh_path}"
+        return self.mesh_id, f"Mesh file path: {self.mesh_path}"
 
     def add_save(self, path):
         self.save_path = path
@@ -218,18 +224,16 @@ class PerInfo(BasicInfo):
         self.tex_id, self.more_tex, self.tex_path, self.more_tex_per_id = None, [], "Empty", []
 
     def clear_mesh(self):
-
         self.mesh_id, self.more_mesh, self.mesh_path, self.more_mesh_per_id = None, [], "Empty", []
 
-    def update_name(self,names:dict):
+    def update_name(self, names: dict):
         if self.name in names.keys():
-            self.has_cn=True;
-            self.cn_name=names.get(self.name)
-        
+            self.has_cn = True
+            self.cn_name = names.get(self.name)
 
     def build_sub(self, value_type, file_type, index):
         """
-        从自身的treeid中寻找目标
+        Find the target from its own treeid
         :param value_type:
         :param file_type:
         :param index:
@@ -250,7 +254,7 @@ class PerInfo(BasicInfo):
         return os.path.isfile(val.tex_path), val
 
     def independent(self, name, tree, tree_root):
-        # 独立
+        # independent
         target = PerInfo(name, f"{self.val}-# {self.sub_data}", self.has_cn)
         target.tex_path = self.tex_path
         target.mesh_path = self.mesh_path
@@ -268,7 +272,7 @@ class PerWorkList(BasicInfoList):
         self.mesh_match = mesh_match
         self.data = GlobalData()
 
-    # 显示部分
+    # Show part
     def show_in_tree(self, tree, tree_root):
         list(map(lambda x: self._info_dict[x].append_to_tree(tree, tree_root), self._key_list))
 
@@ -281,7 +285,7 @@ class PerWorkList(BasicInfoList):
     def remove(self, item: collections.abc.Iterable):
         return PerWorkList(super(PerWorkList, self).remove(item))
 
-    # 查找部分
+    # Find part
     def find_by_id(self, id):
         values = list(filter(lambda x: self._info_dict[x].tree_ID == id, self._key_list))
         if values.__len__() == 0:
@@ -290,13 +294,13 @@ class PerWorkList(BasicInfoList):
 
     def find_in_each(self, id) -> Tuple[bool, bool, bool, int, PerInfo]:
         """
-        从每一个中寻找指定id
+        Find the specified id from each
         :param id:
-        :return: (是否成功，类型【单个True，列表False】，类型[tex(True),mesh(False)]，索引，对象本身)
+        :return: (whether successful, type [single True, list False], type [tex(True), mesh(False)], index, object itself)
         """
         target = None
         for value in self:
-            # 如果id为以下的部分，进入
+            # If the ID is in the following section, enter
             if id == value.tex_id == id or id in value.more_tex_per_id or value.mesh_id == id or \
                     id in value.more_mesh_per_id:
                 target = value
@@ -313,13 +317,13 @@ class PerWorkList(BasicInfoList):
 
     def find_action(self, id) -> Tuple[bool, int, PerInfo]:
         """
-        查找是否为特殊动作按键
+        Check if it is a special action button
         :param id:
-        :return: 是否成功【true/false】，动作类型，作用目标
+        :return: Whether successful [true/false], action type, target
         """
         target = None
         for value in self:
-            # 如果id为以下的部分，进入
+            # If the ID is in the following section, enter
             if id in value.action_group:
                 target = value
                 break
@@ -329,12 +333,12 @@ class PerWorkList(BasicInfoList):
             index = target.action_group.index(id)
             return True, index, target
 
-    # 添加部分
+    # Adding part
     def set_tex(self, value, name=None):
         """
-        添加贴图
-        :param name: [可选]新添加的texture地址的指向项目名称，为None会根据value获取
-        :param value: 新添加的texture地址
+        Add texture
+        :param name: [Optional] The name pointing to the newly added texture address, None will be based on value
+        :param value: The newly added texture address
         :return:
         """
         has_ = False
@@ -347,13 +351,13 @@ class PerWorkList(BasicInfoList):
                     has_ = True
                     key = re.split(r'\s#\d+(\[alpha\])?$', key)[0]
 
-            # 赋值过程
+            # Assignment process
             val: PerInfo = self._info_dict[key]
             if value not in val.more_tex:
                 val.more_tex.append(value)
 
             lower_path = os.path.split(value)[0].lower()
-            # 如果非空考虑优先级
+            # If non-empty, consider priority
             if 0 < val.tex_step and lower_path.endswith(self.texture_match[0]):
                 val.tex_path = value
                 val.tex_step = 0
@@ -369,11 +373,11 @@ class PerWorkList(BasicInfoList):
 
     def set_mesh(self, value, name=None):
         """
-               添加mesh网格
-               :param name: [可选]新添加的mesh地址的指向项目名称，为None会根据value获取
-               :param value: 新添加的mesh地址
-               :return:
-               """
+        Add mesh grid
+        :param name: [optional] The name of the newly added mesh address, will be obtained from value if None
+        :param value: The newly added mesh address
+        :return:
+        """
         has_ = False
         if isinstance(value, str) and os.path.isfile(value):
             if name is not None:
@@ -389,7 +393,7 @@ class PerWorkList(BasicInfoList):
                 val.more_mesh.append(value)
 
             lower_path = os.path.split(value)[0].lower()
-            # 如果非空考虑优先级
+            # Consider priority if not empty
             if 0 < val.mesh_step and lower_path.endswith(self.mesh_match[0]):
                 val.mesh_path = value
                 val.mesh_step = 0
@@ -404,16 +408,16 @@ class PerWorkList(BasicInfoList):
 
     def append_name(self, name, names: dict, *, has_cn=False):
         """
-        添加新对象
-        :param names: 预设键-值对应组
-        :param name: 对象索引key
-        :param has_cn: 对象是否有中文名
+        Add a new object
+        :param names: Preset key-value pairs
+        :param name: Object index key
+        :param has_cn: Whether the object has a Chinese name
         :return:
         """
         # if name == "unknown4":
         #     print(name)
         if self.is_ignore_case:
-            name=name.lower()
+            name = name.lower()
 
         if name not in self._key_list:
             if name not in names.keys():
@@ -422,7 +426,7 @@ class PerWorkList(BasicInfoList):
             else:
                 has_cn = True
                 target_cn = names[name]
-            # 如果中文名为空，也认为没有中文名
+            # If the Chinese name is empty, also consider it as having no Chinese name
             if target_cn == "":
                 target_cn = name
                 has_cn = False
@@ -436,14 +440,14 @@ class PerWorkList(BasicInfoList):
         else:
             return name
 
-    # 清空部分
+    # Clearing section
     def clear_mesh(self):
         list(map(lambda x: x.clear_mesh(), self))
 
     def clear_tex(self):
         list(map(lambda x: x.clear_tex(), self))
 
-    # 生成部分
+    # Generation section
     def build_able(self):
         val = filter(lambda x: x.get_is_able_work(), self)
         value = PerWorkList(val)

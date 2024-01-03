@@ -32,18 +32,18 @@ class QuickRestore(threading.Thread):
     def run(self):
         try:
             if not os.path.isfile(self.info.tex_path):
-                info_str = f"{self.info.cn_name}:无法预览"
+                info_str = f"{self.info.cn_name}: Unable to preview"
             else:
                 size = self.size
                 if self.info.get_is_able_work():
                     pic, pic_size = ImageWork.restore_tool_no_save(self.info.mesh_path, self.info.tex_path, size)
-                    info_str = f"可还原立绘预览：{self.info.cn_name}；尺寸：{pic_size}"
+                    info_str = f"Preview restorable illustration: {self.info.cn_name}; Size: {pic_size}"
                 elif self.info.lay_in != '':
                     pic, pic_size = ImageWork.pic_transform(self.info.lay_in, size)
-                    info_str = f"导出目标同名文件预览：{self.info.cn_name}；尺寸：{pic_size}"
+                    info_str = f"Preview export target with the same name: {self.info.cn_name}; Size: {pic_size}"
                 else:
                     pic, pic_size = ImageWork.pic_transform(self.info.tex_path, size)
-                    info_str = f"原始文件预览：{self.info.cn_name}；尺寸：{pic_size}"
+                    info_str = f"Original file preview: {self.info.cn_name}; Size: {pic_size}"
 
                 self.bitmap_show.ClearBackground()
                 temp = wx.Bitmap.FromBufferRGBA(pic.width, pic.height, pic.tobytes())

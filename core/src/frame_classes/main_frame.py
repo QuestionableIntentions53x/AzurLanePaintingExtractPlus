@@ -24,40 +24,40 @@ from core.src.thread_classes.quick_view import QuickRestore
 
 class MainFrame(Mf):
     """
-    主窗口类
+    Main window class
     """
 
     def __init__(self, parent, path=os.getcwd()):
         super(MainFrame, self).__init__(parent)
-        # 常参储存类
+        # Constant parameter storage class
         self.data = GlobalData()
-        # 添加图标
+        # Add icon
         icon = wx.Icon(os.path.join(path, "core\\assets\\sf_icon.ico"))
         self.SetIcon(icon)
-        # 舰娘名称文件
+        # Shipgirl name file
         self.names = {}
         with open(os.path.join(path, "core\\assets\\names.json"), "r")as file:
             self.names = json.load(file)
-        # 设置文件
+        # Settings file
         with open(os.path.join(path, "core\\assets\\setting.json"), 'r')as file:
             self.setting_info = json.load(file)
         with open(os.path.join(path, "core\\assets\\height_setting.json"), 'r')as file:
             self.height_setting = json.load(file)
 
-        self.root = self.m_treeCtrl_info.AddRoot(u"碧蓝航线")
-        # 数据储存结构实例
+        self.root = self.m_treeCtrl_info.AddRoot(u"azur lane")
+        #Data storage structure example
         self.painting_work = PerWorkList(mesh_match=self.height_setting[self.data.sk_mash_match],
                                          texture_match=self.height_setting[self.data.sk_texture_match],
                                          is_ignore_case=self.setting_info[self.data.sk_ignore_case])
         self.view_work = PerWorkList()
-        # 查找tree索引的信息，pos->[单个true，列表中false]；type_is->类型【texture，mesh】，name->点击的位置的对象
+        # Find the information of the tree index, pos->[single true, false in the list]; type_is->type [texture, mesh], name->object at the clicked position
         self.is_single, self.type_is, self.name = None, None, None
         self.index = -1
-        # 设置拖动绑定
+        # Set drag binding
         self.drop = DropOrder(self.painting_work,
                               self.view_work, self, self.get_input_data)
         self.m_treeCtrl_info.SetDropTarget(self.drop)
-        # 立绘还原线程
+        # Vertical painting restoration thread
         self.thread_quick = None
         self.thread_main = None
         self.thread_main_groups = []
@@ -65,22 +65,22 @@ class MainFrame(Mf):
             "thread-1", "thread-2", "thread-3", "thread-4")
         self.thread_watch_dog = None
         self.thread_side_work = None
-        # 线程锁定器，队列
+        # Thread lock, queue
         self.locker = threading.Lock()
         self.work_queue = queue.Queue()
         self.err_queue = queue.Queue(10)
-        # 进入退出状态
+        # Enter the exit state
         self.enter_exit = False
-        # 保存路径，脚本路径
+        # Save path, script path
         self.save_path = ""
         self.work_path = path
-        # 之窗口（只有一个）
+        # window (only one)
         self.__dialog = None
-        # ，搜索，筛选器
+        #, search, filter
         self.search_type = False
         self.filter_type = False
 
-        # 搜索数据
+        # Search data
         self.select_data = None
 
         self.frame_size = self.Size
@@ -90,7 +90,7 @@ class MainFrame(Mf):
     @staticmethod
     def run(path):
         """
-        运行入口函数
+        Run entry function
         :return:
         """
         app = wx.App()
@@ -104,37 +104,37 @@ class MainFrame(Mf):
         self.view_work = view_work
         #self.painting_work = painting_group
 
-    # 以下为辅助函数，新增部分
+    # The following are auxiliary functions, new parts
     def change_path(self, is_single, type_is, target, index):
         """
-        修改指向文件方法
+        Modify the method pointing to the file
         :param index:
-        :param is_single: 选中的tree中元素是否为列表外元素
-        :param type_is: 选中类型 （tex,mesh）
-        :param target: 指向目标方法 type：PerInfo
+        :param is_single: Whether the element in the selected tree is an element outside the list
+        :param type_is: selected type (tex, mesh)
+        :param target: points to the target method type: PerInfo
         :return: bool
         """
         if is_single is None:
             return False
-        # 当选择对象为单个，而不是列表中项目（其他文件的跟标签）
-        # 选择的是texture
+        # When the selected object is a single object, not an item in the list (the tags of other files)
+        #The selected one is texture
         if type_is:
             if is_single:
                 dialog = wx.SingleChoiceDialog(
-                    self, "选择更改Texture文件", "选择更改文件", target.get_select(type_is))
+                    self, "Select to change Texture file", "Select to change file", target.get_select(type_is))
                 if dialog.ShowModal() == wx.ID_OK:
                     index = dialog.GetSelection()
-                # 重定向texture文件
+                # Redirect texture files
             id, data = target.set_tex(index)
             self.m_treeCtrl_info.SetItemText(id, data)
-        # 选择的是mesh
+        #The selected one is mesh
         else:
             if is_single:
                 dialog = wx.SingleChoiceDialog(
-                    self, "选择更改Mesh文件", "选择更改文件", target.get_select(type_is))
+                    self, "Select to change the Mesh file", "Select to change the file", target.get_select(type_is))
                 if dialog.ShowModal() == wx.ID_OK:
                     index = dialog.GetSelection()
-                # 重定向mesh文件
+                # Redirect mesh files
             id, data = target.set_mesh(index)
             self.m_treeCtrl_info.SetItemText(id, data)
 
@@ -147,15 +147,15 @@ class MainFrame(Mf):
                 target.key, wx.Colour(255, 255, 255))
         return True
 
-    # action 响应函数
+    # action response function
     def independent_target(self, target):
         """
-        新建独立目标（新建一个和目标相同的独立对象）
-        :param target: 要新建的目标
+        Create a new independent target (create a new independent object that is the same as the target)
+        :param target: the target to be created
         :return: None
         """
 
-        self.__dialog = wx.TextEntryDialog(parent=None, message='', caption="独立组合的名称",
+        self.__dialog = wx.TextEntryDialog(parent=None, message='', caption="Name of independent combination",
                                            value=f"{target.name}-#{target.sub_data}", )
 
         is_ok = self.__dialog.ShowModal()
@@ -163,18 +163,18 @@ class MainFrame(Mf):
         if is_ok == wx.ID_OK:
             name = self.__dialog.GetValue()
             if name in self.painting_work:
-                wx.MessageBox("该名称已经存在！", "错误", wx.OK | wx.ICON_ERROR)
+                wx.MessageBox("The name already exists!", "Error", wx.OK | wx.ICON_ERROR)
                 self.independent_target(target)
             else:
                 target.independent(name, self.m_treeCtrl_info, self.root)
 
     def face_match_target(self, target):
         if not target.is_able_work:
-            self.m_staticText_info.SetLabel("换头失败！必须是可还原对象")
+            self.m_staticText_info.SetLabel("Head change failed! Must be a restoreable object")
             return
-        self.m_staticText_info.SetLabel("开始换头！")
-        data = wx.SingleChoiceDialog(self, "选择类型：", "类型选择", [
-                                     "面部表情附加模式（窗口尺寸：680 X 470）", "舰装-人物拼接模式（窗口尺寸：1920X1080）"])
+        self.m_staticText_info.SetLabel("Start changing the head!")
+        data = wx.SingleChoiceDialog(self, "Selection type:", "Type selection", [
+                                     "Facial expression additional mode (window size: 680 X 470", "Ship decoration-character splicing mode (window size: 1920X1080 "])
         if wx.ID_OK == data.ShowModal():
             info = data.GetSelection()
             type_is = False
@@ -185,10 +185,10 @@ class MainFrame(Mf):
 
     def atlas_split_target(self, target):
         if not os.path.isfile(target.tex_path):
-            self.m_staticText_info.SetLabel("切割失败，必须有一个可用Texture2D文件")
+            self.m_staticText_info.SetLabel("Cutting failed, there must be an available Texture2D file")
             return
         else:
-            self.m_staticText_info.SetLabel("开始换头！")
+            self.m_staticText_info.SetLabel("Start changing the head!")
             self.__dialog = AtlasSpiltFrame(self, target)
             self.__dialog.ShowModal()
 
@@ -197,11 +197,11 @@ class MainFrame(Mf):
         self.m_treeCtrl_info.DeleteChildren(target.tree_ID)
         target.append_item_tree(self.m_treeCtrl_info)
         self.m_staticText_info.SetLabel(
-            f"{target.cn_name}已转换,现在为{target.must_able}")
+            f"{target.cn_name} has been converted and is now {target.must_able}")
 
     def remove_target(self, target):
         info = wx.MessageBox(
-            f"确实要移除\n{target}\n?", '信息', wx.YES_NO | wx.ICON_INFORMATION)
+            f"Are you sure you want to remove\n{target}\n?", 'Information', wx.YES_NO | wx.ICON_INFORMATION)
         if info == wx.YES:
             self.m_treeCtrl_info.Delete(target.tree_ID)
             self.painting_work.remove([target])
@@ -210,24 +210,24 @@ class MainFrame(Mf):
 
     def split_target_only(self, target):
         if not target.is_able_work:
-            self.m_staticText_info.SetLabel(f"{target}无法切割，为非可还原对象")
+            self.m_staticText_info.SetLabel(f"{target} cannot be cut and is a non-reducible object")
             return
         self.__dialog = wx.DirDialog(
-            self, "选择保存文件夹", self.work_path, wx.DD_NEW_DIR_BUTTON | wx.DD_DIR_MUST_EXIST)
+            self, "Select the save folder", self.work_path, wx.DD_NEW_DIR_BUTTON | wx.DD_DIR_MUST_EXIST)
         if wx.ID_OK == self.__dialog.ShowModal():
             path = self.__dialog.GetPath()
             if self.setting_info[self.data.sk_make_new_dir]:
-                path = os.path.join(path, "碧蓝航线-导出")
+                path = os.path.join(path, "Azur Lane-Export")
                 os.makedirs(path, exist_ok=True)
                 ImageWork.split_only_one(target, path)
                 self.m_staticText_info.SetLabel(
-                    f"{target.cn_name}切割已完成，保存于{path}")
+                    f"{target.cn_name} cutting completed, saved in {path}")
 
     def sprite_split(self, target):
         if not os.path.isfile(target.tex_path):
-            self.m_staticText_info.SetLabel(f"{target}无法切割，至少需要一个Texture2D")
+            self.m_staticText_info.SetLabel(f"{target} cannot be cut, at least one Texture2D is required")
             return
-        self.m_staticText_info.SetLabel("开始Sprite切割！")
+        self.m_staticText_info.SetLabel("Start Sprite cutting!")
         self.__dialog = SpriteSplitFrame(self, target)
         self.__dialog.ShowModal()
 
@@ -235,9 +235,9 @@ class MainFrame(Mf):
         src_name = target.name
         local_name = target.cn_name
 
-        info = f"更改本地化：{'修改旧本地化' if src_name in self.names.keys() else '添加本地化' } {src_name}"
+        info = f"Change localization: {'Modify old localization' if src_name in self.names.keys() else 'Add localization' } {src_name}"
 
-        d = wx.TextEntryDialog(self, info, "更改本地化", local_name)
+        d = wx.TextEntryDialog(self, info, "Change localization", local_name)
         if d.ShowModal() == wx.ID_OK:
             data = str(d.GetValue())
             if data == local_name or data == "":
@@ -247,11 +247,11 @@ class MainFrame(Mf):
                 self.names[src_name] = data
                 self.refeash(None)
 
-    # 以下为原有函数
+    # The following are the original functions
 
     def restart(self, size, able, unable):
         """
-        重置还原线程
+        Reset restore thread
         :return:
         """
         self.thread_main_groups.clear()
@@ -269,18 +269,18 @@ class MainFrame(Mf):
         #                                 self.painting_work.build_unable(), self, self.setting_info,
         #                                 self.names, self.save_path, self.setting_info[self.data.sk_ignore_case])
 
-        self.m_staticText_info.SetLabel("重置还原进度！")
+        self.m_staticText_info.SetLabel("Reset restoration progress!")
 
         self.m_gauge_state.SetValue(0)
 
     # export
     def export_choice(self):
         """
-        导出选择项
+        Export selections
         :return: none
         """
         target = self.name
-        self.__dialog = wx.FileDialog(self, "保存", os.getcwd(), f'{target.cn_name}.png', "*.png",
+        self.__dialog = wx.FileDialog(self, "keep", os.getcwd(), f'{target.cn_name}.png', "*.png",
                                       wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_PREVIEW)
 
         if self.__dialog.ShowModal() == wx.ID_OK:
@@ -297,18 +297,18 @@ class MainFrame(Mf):
 
     def export_all(self, path, for_work: PerWorkList = None):
         """
-        导出全部
-        :param path:导出目标目录
-        :param for_work: 导出用列表结构体
+        Export all
+        :param path:Export target directory
+        :param for_work: list structure for export
         :return:
         """
         data = self.data
 
         if self.setting_info[data.sk_make_new_dir]:
-            path += r"\碧蓝航线-导出"
+            path += r"\Azur Lane-Export"
 
         os.makedirs(path, exist_ok=True)
-        # 重置进度
+        #Reset progress
         # self.restart()
         self.save_path = path
         self.m_gauge_state.SetValue(0)
@@ -318,14 +318,14 @@ class MainFrame(Mf):
         else:
             able = self.painting_work.build_able()
 
-        # 跳过已经存在的处理
+        # Skip existing processing
         if self.setting_info[data.sk_skip_exist]:
             target_path_list = FileFilter.all_file(path)
 
             skip = able.build_skip(target_path_list)
             able = able.remove(skip)
 
-        # 启动线程
+        # Start thread
         # self.thread_main.add_save_path(self.save_path)
         # self.thread_main.update_value(able, for_work.build_unable())
         # if self.thread_main.is_alive():
@@ -341,23 +341,23 @@ class MainFrame(Mf):
         for thread in self.thread_main_groups:
             thread.start()
 
-        # 测试多进程
+        # Test multiple processes
         # apply_work(able, self.save_path, self, self.data)
 
     def copy_file(self):
         """
-        导出不可还原部分（拷贝）
+        Export the non-restorable part (copy)
         :return: none
         """
         data = self.data
-        self.__dialog = wx.DirDialog(self, "保存", os.getcwd(),
+        self.__dialog = wx.DirDialog(self, "Save", os.getcwd(),
                                      style=wx.DD_DIR_MUST_EXIST | wx.DD_CHANGE_DIR | wx.DD_NEW_DIR_BUTTON
                                            | wx.DD_DEFAULT_STYLE)
         if self.__dialog.ShowModal() == wx.ID_OK:
             unable = self.painting_work.build_unable()
             path = self.__dialog.GetPath()
             if self.setting_info[data.sk_output_group] == data.feg_by_type:
-                path += "\\拷贝"
+                path += "\\copy"
             num = 0
             self.m_gauge_state.SetValue(0)
             for name in unable:
@@ -372,76 +372,76 @@ class MainFrame(Mf):
         if self.setting_info[data.sk_finish_exit]:
             self.exit()
 
-    # 以下为回调函数
+   #The following is the callback function
     def on_info_select(self, event):
         """
-        tree元素选择响应方法
-        :param event: 事件
+        tree element selection response method
+        :param event: event
         :return:
         """
-        # 如果不是在退出状态（在退出的时候tree会鬼畜）
+        # If it is not in the exit state (the tree will behave strangely when exiting)
         if not self.enter_exit:
 
-            # 选择修改键复位
+            # Select modifier key to reset
             self.m_bpButton_change.Enable(False)
-            # 获取选择元素的id
+            # Get the id of the selected element
             val = event.GetItem()
 
-            # 如果没用使用搜索或筛选器，就使用默认储存类
-            # 查找id，是否为标题标签
+            # If no search or filter is used, use the default storage class
+            # Find the id, whether it is a title tag
             if not self.search_type and not self.filter_type:
                 is_ok, name = self.painting_work.find_by_id(val)
             else:
                 is_ok, name = self.view_work.find_by_id(val)
 
-            # 如果是，显示预览图
+            # If yes, show preview image
             if is_ok:
-                self.m_staticText_info.SetLabel(f"选择：{name.cn_name}")
-
+                self.m_staticText_info.SetLabel(f"choose:{name.cn_name}")
+                
                 self.select_data = self.name = name
                 self.thread_quick = QuickRestore(name, self)
                 self.thread_quick.start()
 
-            # 寻找tex或mesh路径句柄或触发按键
+            # Find tex or mesh path handle or trigger button
             else:
-                # 从每个元素中查找id
+                # Find the id from each element
                 if not self.search_type and not self.filter_type:
                     is_ok, pos, type_is, index, name = self.painting_work.find_in_each(
                         val)
                 else:
                     is_ok, pos, type_is, index, name = self.view_work.find_in_each(
                         val)
-                # 找到了
+                # found it
 
                 if is_ok:
-                    # 可用修改
+                    # Available modifications
                     self.m_bpButton_change.Enable(True)
                     self.is_single, self.type_is, self.name = pos, type_is, name
                     self.index = index
-                    # 生成用于显示的对象
+                    # Generate objects for display
                     is_able, value = name.build_sub(pos, type_is, index)
                     if is_able:
-                        # 生成对象的texture文件是正常文件
+                        # The texture file that generates the object is a normal file
                         self.thread_quick = QuickRestore(value, self)
                         self.thread_quick.start()
                         self.select_data = value
-                        is_able = "可预览"
+                        is_able = "Previewable"
                     else:
-                        is_able = "不可预览"
+                        is_able = "Not previewable"
 
                     if pos:
-                        pos = "单个类型"
+                        pos = "single type"
                     else:
-                        pos = "列表"
+                        pos = "list"
                     if type_is:
-                        type_is = "texture文件"
+                        type_is = "texture file"
                     else:
-                        type_is = "mesh文件"
+                        type_is = "mesh file"
 
                     self.m_staticText_info.SetLabel(
-                        f"选择： {name.cn_name}中的{pos}{type_is}: {self.m_treeCtrl_info.GetItemText(val)}，{is_able}")
+                        f"Select: {pos}{type_is} in {name.cn_name}: {self.m_treeCtrl_info.GetItemText(val)}, {is_able}")
 
-                # 没找到，查找功能按键
+                # Not found, search for function buttons
                 else:
                     if not self.search_type and not self.filter_type:
                         is_ok, type_is, target = self.painting_work.find_action(
@@ -469,11 +469,11 @@ class MainFrame(Mf):
                             self.change_local(target)
 
     def choice_file(self, event):
-        # 选择对应文件
+        #Select the corresponding file
         is_ok = self.change_path(
             self.is_single, self.type_is, self.name, self.index)
         if not is_ok:
-            wx.MessageBox("无数据！", "错误", wx.OK | wx.ICON_ERROR)
+            wx.MessageBox("No data!", "Error", wx.OK | wx.ICON_ERROR)
             return
 
         self.thread_quick = QuickRestore(self.name, self)
@@ -481,38 +481,38 @@ class MainFrame(Mf):
 
     def work(self, event):
         """
-        进行导出文件工具
+        Export file tool
         :param event:
         :return:
         """
         data = self.data
-        show = ["导出全部可还原", "拷贝全部不可还原", "导出选择项", "导出当前列表项"]
-        # 添加不可用后缀
+        show = ["Export all can be restored", "Copy all cannot be restored", "Export selected items", "Export current list items"]
+        #Add unavailable suffix
         if len(self.painting_work.build_able()) == 0:
-            show[data.et_all] += "（不可用）"
+            show[data.et_all] += "(unavailable)"
         if len(self.painting_work.build_unable()) == 0:
-            show[data.et_copy_only] += "（不可用）"
+            show[data.et_copy_only] += "(not available)"
         if self.name is None:
-            show[data.et_select] += "（不可用）"
+            show[data.et_select] += "(unavailable)"
         if self.filter_type or self.search_type:
             if self.view_work.__len__() == 0:
-                show[data.et_list_item] += "（不可用）"
+                show[data.et_list_item] += "(unavailable)"
         else:
             if len(self.painting_work) == 0:
-                show[data.et_list_item] += "（不可用）"
+                show[data.et_list_item] += "(unavailable)"
 
-        self.__dialog = wx.SingleChoiceDialog(self, "选择类型", "选择导出类型", show)
+        self.__dialog = wx.SingleChoiceDialog(self, "Choice type", "Choose export type", show)
 
         if self.__dialog.ShowModal() == wx.ID_OK:
             index = self.__dialog.GetSelection()
-            # 导出全部
+            #Export all
             if index == data.et_all:
-                # 如果没有可用列表，退出导出
+                # If no list is available, exit export
                 if len(self.painting_work.build_able()) == 0:
-                    wx.MessageBox("不可用！", "错误")
+                    wx.MessageBox("Not available!", "Error")
                     return
-                # 开始导出目标文件夹选择
-                title = '保存-碧蓝航线'
+                # Start exporting target folder selection
+                title = 'Save-Azur Lane'
                 address = os.getcwd()
                 dialog = wx.DirDialog(
                     self, title, address, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
@@ -520,32 +520,32 @@ class MainFrame(Mf):
                 if dialog.ShowModal() == wx.ID_OK:
                     temp = dialog.GetPath()
                     if self.painting_work.build_able().__len__() > 0:
-                        # 开始导出
+                        # Start exporting
                         self.export_all(temp, self.painting_work)
-            # 拷贝不可还原
+            #Copy cannot be restored
             if index == data.et_copy_only:
                 if len(self.painting_work.build_unable()) == 0:
-                    wx.MessageBox("不可用！！", "错误")
+                    wx.MessageBox("Not available!!", "Error")
                     return
                 self.copy_file()
-            # 导出选择项
+            #Export selections
             if index == data.et_select:
                 if self.name is None:
-                    wx.MessageBox("不可用！！", "错误")
+                    wx.MessageBox("Not available!!", "Error")
                     return
                 self.export_choice()
 
-            # 导出当前列表项
+            #Export the current list item
             if index == data.et_list_item:
                 if self.filter_type or self.search_type:
                     if self.view_work.__len__() == 0:
-                        wx.MessageBox("不可用！！", "错误")
+                        wx.MessageBox("Not available!!", "Error")
                         return
                 else:
                     if len(self.painting_work) == 0:
-                        wx.MessageBox("不可用！！", "错误")
+                        wx.MessageBox("Not available!!", "Error")
                         return
-                title = '保存'"-碧蓝航线"
+                title = 'Save'"-Azur Lane"
                 address = os.getcwd()
                 dialog = wx.DirDialog(
                     self, title, address, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
@@ -556,14 +556,14 @@ class MainFrame(Mf):
 
     def filter_work(self, event):
         """
-        筛选器行为
+        filter behavior
         :param event:
         :return:
         """
         index = event.GetSelection()
         value = self.data.fp_pattern_group[index]
 
-        # 如果筛选器选择全部，重置显示全部
+        # If the filter selects all, reset to show all
         if index == self.data.tf_all:
             self.filter_type = False
 
@@ -572,7 +572,7 @@ class MainFrame(Mf):
             self.painting_work.show_in_tree(self.m_treeCtrl_info, self.root)
             self.enter_exit = False
         else:
-            # 根据状态显示不同
+            # Displayed differently depending on status
             if self.search_type:
                 self.view_work = self.view_work.build_from_pattern(value)
             else:
@@ -587,17 +587,17 @@ class MainFrame(Mf):
 
     def search(self, event):
         """
-        查找器行为
+        Finder behavior
         :param event:
         :return:
         """
-        # 获取搜索关键字
+        # Get search keywords
         if event is None:
             value = self.m_searchCtrl1.GetValue()
         else:
             value = event.GetString()
 
-        # 如果搜索关键字不为空
+        # If the search keyword is not empty
         if value != '':
 
             if not self.filter_type:
@@ -615,7 +615,7 @@ class MainFrame(Mf):
             self.m_treeCtrl_info.DeleteChildren(self.root)
             self.view_work.show_in_tree(self.m_treeCtrl_info, self.root)
             self.enter_exit = False
-        # 如果搜索为空，重置列表
+       # If search is empty, reset the list
         else:
             self.search_type = False
 
@@ -626,7 +626,7 @@ class MainFrame(Mf):
 
     def setting(self, event):
         """
-        打开设置
+        Open settings
         :param event:
         :return:
         """
@@ -637,7 +637,7 @@ class MainFrame(Mf):
                                 self.work_path, self.names, self.height_setting, unamed_list)
 
         self.__dialog.ShowModal()
-        # 重置设置
+        # reset settings
         self.setting_info = self.__dialog.get_setting()
         self.names = self.__dialog.get_names()
 
@@ -657,7 +657,7 @@ class MainFrame(Mf):
 
     def resize(self, event):
         """
-        重置窗口尺寸（鸡肋）
+        Reset window size (useless)
         :param event:
         :return:
         """
@@ -666,7 +666,7 @@ class MainFrame(Mf):
             self.thread_quick.start()
 
     def exit(self, event=None):
-        # 退出
+        # quit
         #        self.thread_watch_dog.
         if self.thread_watch_dog is not None:
             self.thread_watch_dog.stop()

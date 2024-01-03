@@ -18,12 +18,15 @@ class ImageWork(object):
         bitmap.ClearBackground()
         bitmap.SetBitmap(temp)
 
+    """ IMAGE PROCESSING """
+
     @staticmethod
     def cut_pic_builder(size):
         """
-        :param size: the input img size(wide,high)
-        :return: a callable func
+        :param size: the input img size(width, height)
+        :return: a callable function
         """
+        #TODO: Get rid of this builder function, replace it with an inline lambda
 
         def cut_pic(info):
             a = [round(float(info[1]) * size[0]), round((1 - float(info[2])) * size[1])]
@@ -34,28 +37,50 @@ class ImageWork(object):
 
     @staticmethod
     def draw(pic, pos):
+        """
+        Function intended to be used with reduce(), draws the image onto itself at the position provided
+        :param pic: The image segment
+        :param pos: The position to displace the image by
+        """
         pic.paste(pos[0], pos[1])
         return pic
 
     @staticmethod
-    def division_builder(val1, val2, pic):
+    def division_builder(draw_pic_list, tex_pos_list, pic):
+        """
+        Constructs a function that returns segments of the given image based on the texture and mesh data provided
+        :param draw_pic_list: List of output corners corners
+        :param tex_pos_list: List of input corners
+        :param pic: Input image
+        :returns: Function that returns the requested segment
+        """
         def division(val):
-            print_p = [val1[val[0] - 1], val1[val[1] - 1], val1[val[2] - 1]]
-            cut_p = [val2[val[0] - 1], val2[val[1] - 1], val2[val[2] - 1]]
+            """
+            :param val: The three element tuple containing three corners 
+            :return:    cut: The requested segment
+                        print_area: The position it needs to be placed at
+            """
+            # Get the three corners of input and output
+            #   (they are stored with (1,1) as the origin so they need to be offset)
+            print_p = [draw_pic_list[val[0] - 1], draw_pic_list[val[1] - 1], draw_pic_list[val[2] - 1]]
+            cut_p   = [tex_pos_list[val[0] - 1],  tex_pos_list[val[1] - 1],  tex_pos_list[val[2] - 1]]
 
+            # Of the three output corners, find the smallest x and y coordinates (top left)
             print_area = [min(print_p[0][0], print_p[1][0], print_p[2][0]),
                           min(print_p[0][1], print_p[1][1], print_p[2][1])]
 
+            # Of the three input corners, find the smallest x and y coordinates (top left)
             cut_x = round(min(cut_p[0][0], cut_p[1][0], cut_p[2][0]))
             cut_y = round(min((cut_p[0][1], cut_p[1][1], cut_p[2][1])))
 
-            end_x = round(
-                (max(cut_p[0][0], cut_p[1][0], cut_p[2][0])))
-            end_y = round(
-                (max(cut_p[0][1], cut_p[1][1], cut_p[2][1])))
+            # Of the three input corners, find the largest x and y coordinates (bottom right)
+            end_x = round((max(cut_p[0][0], cut_p[1][0], cut_p[2][0])))
+            end_y = round((max(cut_p[0][1], cut_p[1][1], cut_p[2][1])))
 
+            # The rect defining the segment to cut out
             cut_size = (cut_x, cut_y, end_x, end_y)
 
+            # Crop the specified area
             cut = pic.crop(cut_size)
             return cut, print_area
 
@@ -64,102 +89,146 @@ class ImageWork(object):
     @staticmethod
     def file_analyze(size, mesh_path):
         """
-        分析mesh文件，并返回数据组
-        :param mesh_path: mesh文件路径
-        :param size: texture图片尺寸
-        :return:    draw_pic:绘制坐标
-                    tex_pos:切割坐标
-                    print_pos:绘制分组
+        Analyze the mesh file and return data groups
+        :param mesh_path: mesh file path
+        :param size: texture image size
+        :return:    draw_pic: drawing coordinates
+                    tex_pos: cutting coordinates
+                    print_pos: drawing groups
         """
-        tex_cuter = ImageWork.cut_pic_builder(size)
-        with open(mesh_path, 'r', encoding='utf-8')as file:
+
+        # Read raw mesh data
+        with open(mesh_path, 'r', encoding='utf-8') as file:
             files_line = file.readlines()
-        # 文件解析-1-将文件进行初步分类
-        # draw_pic:绘制坐标
-        # tex_pos:切割坐标
-        # print_pos:绘制分组
+        
+        # TODO: improve explanation, provide example
+        # Collect raw data for processing
         draw_pic = filter(lambda x: match(r'^v\s-*\d+\s-*\d+\s-*\d+\n$', x), files_line)
         tex_pos = filter(lambda x: match(r'^vt\s0\.\d+\s0\.\d+\n$', x), files_line)
         print_pos = filter(lambda x: match(r'^f\s\d+/\d+/\d+\s\d+/\d+/\d+\s\d+/\d+/\d+\n$', x), files_line)
-        # 文件解析-2-将具体参数分离出来
+        
+        # Split raw data into individual numbers
         draw_pic = map(lambda x: split(r'\D+', x), draw_pic)
         tex_pos = map(lambda x: split(r'[^0-9.]+', x), tex_pos)
         print_pos = map(lambda x: split(r'\D+', x), print_pos)
-        # 文件解析-3--将分离的参数转换为可用的参数类型
+        
+        # Convert strings into their respective types
         draw_pic = (map(lambda x: [int(x[1]), int(x[2])], draw_pic))
-        tex_pos = (map(tex_cuter, tex_pos))
+        tex_pos = (map(ImageWork.cut_pic_builder(size), tex_pos))
         print_pos = (map(lambda x: [int(x[1]), int(x[4]), int(x[7])], print_pos))
 
+        # Return the result
         return draw_pic, tex_pos, print_pos
 
     @staticmethod
     def spilt_texture(draw_pic, tex_pos, print_pos, y_pic, img):
-
-        # 计算切割坐标
-        draw_pic = (map(lambda x: [(x[0]), (y_pic - x[1])], draw_pic))
-        # 切割
+        """
+        :param draw_pic: The output corners to place the split segments at
+        :param tex_pos: The input corner to split the image allong
+        :param print_pos: Tuple storing three indexes to points in draw_pic and tex_pos, each segment has two entries
+        :param img: The output image to edit
+        :return: restore: A map containing the split image segments paired with the position they need to be drawn to 
+        """
+        # Build a devider and store the result of calling that devider with each value in the print_pos list
         division = ImageWork.division_builder(list(draw_pic), list(tex_pos), img)
         restore = (map(division, print_pos))
+        
+        # print(list(restore))
 
         return restore
 
     @staticmethod
     def az_paint_restore(mesh_path: str, tex_path: str, must_able=False):
         """
-        a higher func version for extract AzurLane painting
-        :param must_able: is a must able item,just return image and do not have any action
-        :param mesh_path: mesh_file address,str
+        A higher function version for extracting AzurLane paintings
+        :param must_able: is a must-able item, just return the image and do not perform any action
+        :param mesh_path: mesh_file address, str
         :param tex_path: texture file address
         :return: PIL.Image -> the final pic
         """
+        # Get the components of the image
         restore, pic = ImageWork.spilt_only(mesh_path, tex_path, must_able)
         if must_able:
             return restore
-        # 组装
+        # Assemble by passing the draw function along with the image components and output image
         pic_out = reduce(ImageWork.draw, restore, pic)
 
         return pic_out
 
     @staticmethod
     def spilt_only(mesh_path: str, tex_path: str, must_able=False):
+        """
+        Split the raw mesh and texture and initalize the output image
+        :param mesh_path: The absolute path to the mesh (.obj) file
+        :param tex_path: The absolute path to the texture (.png) file
+        :param must_able: returns the texture as an image as is
+        :returns:   restore: A map of the split image segments paired with the position they need to be drawn to
+                    pic: The propery sized output image
+        """
+        
+        # img: Raw scrambled texture
         img = PIL.Image.open(tex_path)
         if must_able:
             return img, None
-
+        
+        # size: input image size (stored as powers of 2 for memory allignment)
         size = img.size
+        
+        # Get the current four corners of the texture (tex_pos) and the four corners they will be moved to (draw_pic)
+        # Print pos is a tuple of image source and destination corners
         draw_pic, tex_pos, print_pos = ImageWork.file_analyze(size, mesh_path)
         draw_pic = list(draw_pic)
-        # 获取绘制坐标点集合
+
+        # Get drawing coordinate point set
         pos = draw_pic.copy()
         x_poses, y_poses = zip(*pos)
-        # 计算画布尺寸
+        
+        # Calculate canvas size
         x_pic = (max(x_poses))
         y_pic = (max(y_poses))
-        # 新建画布
+        
+        # Create a new canvas
         pic = PIL.Image.new("RGBA", (x_pic, y_pic), (255, 255, 255, 0))
-        # 切割
+        
+        # TODO: Skip every other print_pos entry since the data is redundant 
+        # The draw_pic positions are stored with their y values inverted, so they need to be inverted
+        draw_pic = (map(lambda x: [(x[0]), (y_pic - x[1])], draw_pic))
+
+        # Cut
         restore = ImageWork.spilt_texture(draw_pic, tex_pos, print_pos, y_pic, img)
+        
         return restore, pic
+    
+    """ IMAGE RESTORATION """
 
     @staticmethod
     def restore_tool(now_info: PerInfo):
-        """拼图用的函数
+        """
+        Restores an initalized asset, stores the result into the provided PerInfo
+        :param now_info: The asset's parsed information
+        :return:    success: True if the image was successfully restored
+                    messsage: Info about the process
         """
         try:
+            # Check the status of the asset
+            #  If it is unable to perform a restoration will return the raw texture as an image
             must_able = not now_info.get_is_able_work() and now_info.must_able
             pic = ImageWork.az_paint_restore(now_info.mesh_path, now_info.tex_path, must_able)
 
             pic.save(now_info.save_path)
         except RuntimeError as info:
+            # System error
             return False, str(info)
         except ValueError as info:
+            # Math error
             return False, "math" + str(info)
         else:
-            return True, "成功还原：%s" % now_info.cn_name
+            # Successfull restoration
+            return True, "Successfully restored: %s" % now_info.cn_name
 
     @staticmethod
-    def restore_tool_one(mesh_path, pic_path, save_as, ):
-        """拼图用的函数"""
+    def restore_tool_one(mesh_path, pic_path, save_as):
+        """DEPRICATED"""
 
         pic = ImageWork.az_paint_restore(mesh_path=mesh_path, tex_path=pic_path)
 
@@ -168,17 +237,36 @@ class ImageWork(object):
 
     @staticmethod
     def restore_tool_no_save(mesh_path, pic_path, size: tuple):
-        """拼图用的函数"""
+        """
+        Restore and resize without saving it
+        :param mesh_path: The absolute path to the mesh
+        :param pic_path: The absolute path to the texture
+        :param size: The size to change the restored image to
+        """
+        #TODO: Make this the default version of this function and move the save function to PerInfo
         pic = ImageWork.az_paint_restore(mesh_path, pic_path)
         return ImageWork.pic_size_transform(pic, size)
 
+    """ IMAGE EDITING """
+
     @staticmethod
     def pic_transform(path, size):
+        """
+        Load and resize the image found at the given path
+        :param path: The absolute path of the image
+        :param size: The size to change the image to
+        """
         pic = PIL.Image.open(path)
         return ImageWork.pic_size_transform(pic, size)
 
     @staticmethod
     def pic_size_transform(pic, size, is_resize=True):
+        """
+        Resize the given image
+        :param pic: The image to resize
+        :param size: The size to change the image to
+        :parm is_reize: Resize the image or crop it, true by default
+        """
         pic_size = pic.size
         bg = PIL.Image.new("RGBA", size, (255, 255, 255, 0))
 
@@ -192,8 +280,15 @@ class ImageWork(object):
         bg.paste(pic, (x, y, x + pic.size[0], y + pic.size[1]))
         return bg, pic_size
 
+    """ MISC """
+
     @staticmethod
     def split_only_one(target: PerInfo, save_path):
+        """
+        Export the split image to the given path
+        :param target: The target to split
+        :param save_path: the path to output to
+        """
         pic_group, _ = ImageWork.spilt_only(target.mesh_path, target.tex_path, target.must_able)
         if target.must_able:
             pic_group.save(os.path.join(save_path, f"{target.cn_name}.png"))
@@ -206,11 +301,13 @@ class ImageWork(object):
     @staticmethod
     def atlas_split_main(img, atlas_file):
         """
-        切割小人的主要函数
-        :param img: 输入的PIL图像
-        :param atlas_file: atlas文件路径
+        Splitting the main function of the sprite
+        :param img: Input PIL image
+        :param atlas_file: Atlas file path
         :return:
         """
+        # TODO: Provide a better explanation of the atlas splitting process
+
         info_pattern = re.compile(r'(.+)\n'
                                   r'\s{2}rotate:\s(false|true)\n'
                                   r'\s{2}xy:\s(\d+),\s(\d+)\n'
@@ -220,8 +317,8 @@ class ImageWork(object):
                                   r'\s{2}index:\s-1')
         group = {}
 
-        # 加载分割文件
-        with open(atlas_file, 'r', encoding="utf-8")as files:
+        # Load the splitting file
+        with open(atlas_file, 'r', encoding="utf-8") as files:
             file_work = files.read()
 
         info = info_pattern.findall(file_work)
@@ -257,6 +354,7 @@ class ImageWork(object):
 
     @staticmethod
     def match_code(tab_count: int, key: str, target_string, type_is=group_type):
+        #TODO: Comment
         tabs = ''
         count = 0
         while count < int(tab_count):
@@ -276,7 +374,8 @@ class ImageWork(object):
 
     @staticmethod
     def dump_work_json(file, use_id, id_num, pic):
-        with open(file, "r")as f:
+        #TODO: Comment
+        with open(file, "r") as f:
             f_info = json.load(f)
 
         render_data = f_info["0 Sprite Base"]["1 SpriteRenderData m_RD"]
@@ -295,14 +394,15 @@ class ImageWork(object):
             box = [x_pos, y_pos, width + x_pos, height + y_pos]
             data = pic.crop(box)
         except Exception as err_info:
-            wx.MessageBox(f"处理\n【{file}】\n时出错\n({err_info})", "错误", wx.ICON_ERROR)
+            wx.MessageBox(f"Error occurred while processing\n【{file}】\n({err_info})", "Error", wx.ICON_ERROR)
             return False, None
         else:
             return True, data
 
     @staticmethod
     def dump_work_text(file, use_id, id_num, pic):
-        with open(file, "r")as f:
+        #TODO: Comment
+        with open(file, "r") as f:
             f_info = f.read()
         base = ImageWork.match_code(0, 'Sprite Base', f_info)
         render_data = ImageWork.match_code(1, 'SpriteRenderData m_RD', base)
@@ -321,14 +421,20 @@ class ImageWork(object):
             box = [x_pos, y_pos, width + x_pos, height + y_pos]
             data = pic.crop(box)
         except Exception as err_info:
-            wx.MessageBox(f"处理\n【{file}】\n时出错\n({err_info})", "错误", wx.ICON_ERROR)
+            wx.MessageBox(f"Error occurred while processing\n【{file}】\n({err_info})", "Error", wx.ICON_ERROR)
             return False, None
         else:
             return True, data
 
     @staticmethod
-    def spilt_sprite(target, files, id_num, dump_file):
-        """Sprite切割"""
+    def split_sprite(target, files, id_num, dump_file):
+        """
+        Debug function to dump texture json or text data
+        :param target: The asset to dump info about
+        :param files: The files to parse
+        :param id_num: The id number to check against
+        :param dump_file: 0 = dump text file, 1 = dump json file 
+        """
         if id_num == '':
             use_id = False
         else:

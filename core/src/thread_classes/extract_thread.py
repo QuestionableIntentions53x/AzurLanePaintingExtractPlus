@@ -44,11 +44,11 @@ class RestoreThread(threading.Thread):
             try:
                 if self.index < len(self.able) and not self.stop:
                     now_info: PerInfo = self.able[self.index]
-                    self.format.m_staticText_info.SetLabel("当前第%d个！为：%s 类型-直接还原" % (self.index + 1, now_info.cn_name))
+                    self.format.m_staticText_info.SetLabel("Currently at %d! For: %s Type - Direct Restore" % (self.index + 1, now_info.cn_name))
 
                     now_info.is_save_as_cn = self.setting[data.sk_use_cn_name]
 
-                    # 文件分类部分
+                    # File categorization section
                     if self.setting[data.sk_output_group] == data.feg_do_no_group:
                         save_path = self.save_path
 
@@ -59,26 +59,25 @@ class RestoreThread(threading.Thread):
                         pattern_young = data.fp_young
                         pattern_self = data.fp_default_skin
                         if pattern_skin.match(now_info.name) is not None:
-
-                            save_path = f"{self.save_path}\\皮肤"
+                            save_path = f"{self.save_path}\\Skin"
 
                         elif pattern_marry.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\婚纱"
+                            save_path = f"{self.save_path}\\Wedding"
 
                         elif pattern_power.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\改造"
+                            save_path = f"{self.save_path}\\Build_Up"
 
                         elif pattern_self.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\原皮"
+                            save_path = f"{self.save_path}\\Default_Skin"
 
                         elif pattern_young.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\幼女化"
+                            save_path = f"{self.save_path}\\Young"
 
                         elif data.fp_u_skin.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\μ兵装"
+                            save_path = f"{self.save_path}\\μ_Armor"
 
                         else:
-                            save_path = f"{self.save_path}\\其他"
+                            save_path = f"{self.save_path}\\Other"
 
                     elif self.setting[data.sk_output_group] == data.feg_by_name:
                         val = re.match(r'^(.+)(_[hg\d])$', now_info.name)
@@ -101,7 +100,7 @@ class RestoreThread(threading.Thread):
                         save_path = f"{self.save_path}\\{val}"
 
                     elif self.setting[data.sk_output_group] == data.feg_by_is_able:
-                        save_path = f"{self.save_path}\\{'还原'}"
+                        save_path = f"{self.save_path}\\{'Restore'}"
 
                     else:
                         save_path = self.save_path
@@ -118,7 +117,7 @@ class RestoreThread(threading.Thread):
                     self.format.m_gauge_state.SetValue(val)
                     self.index += 1
             except KeyError as info:
-                self.format.m_staticText_info.SetLabel(f"处理出错！，为{info}")
+                self.format.m_staticText_info.SetLabel(f"Processing error! For {info}")
                 raise
         if self.stop:
             return
@@ -126,7 +125,7 @@ class RestoreThread(threading.Thread):
 
             num = 0
             if self.setting[data.sk_output_group] == data.feg_by_is_able:
-                save_path = f'{self.save_path}\\拷贝'
+                save_path = f'{self.save_path}\\Copy'
             else:
                 save_path = self.save_path
 
@@ -141,9 +140,9 @@ class RestoreThread(threading.Thread):
                 shutil.copyfile(name.tex_path, name.save_path)
 
                 self.format.m_gauge_state.SetValue(round(100 * (num / len(self.unable))))
-                self.format.m_staticText_info.SetLabel(f"当前：{name.cn_name},仅拷贝")
+                self.format.m_staticText_info.SetLabel(f"Current: {name.cn_name}, Copy Only")
 
-        self.format.m_staticText_info.SetLabel(f"完成，共{len(self.able) + len(self.unable)}")
+        self.format.m_staticText_info.SetLabel(f"Completed, Total {len(self.able) + len(self.unable)}")
         self.format.start = False
 
         if self.stop:
@@ -190,19 +189,19 @@ class WorkThread(threading.Thread):
             if self.work_queue.empty():
                 exit_flag = False
             try:
-                # 拿东西
+                # Get something
                 if not self.work_queue.empty():
                     self.locker.acquire()
                     target, count = self.work_queue.get()
                     self.locker.release()
 
-                    # 干活！
+                    # Do the job!
                     now_info: PerInfo = target
-                    self.format.m_staticText_info.SetLabel("当前第%d个！为：%s 类型-直接还原" % (count + 1, now_info.cn_name))
+                    self.format.m_staticText_info.SetLabel("Currently at %d! For: %s Type - Direct Restore" % (count + 1, now_info.cn_name))
 
                     now_info.is_save_as_cn = self.setting[data.sk_use_cn_name]
 
-                    # 文件分类部分
+                    # File categorization section
                     if self.setting[data.sk_output_group] == data.feg_do_no_group:
                         save_path = self.save_path
 
@@ -213,26 +212,25 @@ class WorkThread(threading.Thread):
                         pattern_young = data.fp_young
                         pattern_self = data.fp_default_skin
                         if pattern_skin.match(now_info.name) is not None:
-
-                            save_path = f"{self.save_path}\\皮肤"
+                            save_path = f"{self.save_path}\\Skin"
 
                         elif pattern_marry.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\婚纱"
+                            save_path = f"{self.save_path}\\Wedding"
 
                         elif pattern_power.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\改造"
+                            save_path = f"{self.save_path}\\Build_Up"
 
                         elif pattern_self.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\原皮"
+                            save_path = f"{self.save_path}\\Default_Skin"
 
                         elif pattern_young.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\幼女化"
+                            save_path = f"{self.save_path}\\Young"
 
                         elif data.fp_u_skin.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\μ兵装"
+                            save_path = f"{self.save_path}\\μ_Armor"
 
                         else:
-                            save_path = f"{self.save_path}\\其他"
+                            save_path = f"{self.save_path}\\Other"
 
                     elif self.setting[data.sk_output_group] == data.feg_by_name:
                         val = re.match(r'^(.+)(_[hg\d])$', now_info.name)
@@ -255,7 +253,7 @@ class WorkThread(threading.Thread):
                         save_path = f"{self.save_path}\\{val}"
 
                     elif self.setting[data.sk_output_group] == data.feg_by_is_able:
-                        save_path = f"{self.save_path}\\{'还原'}"
+                        save_path = f"{self.save_path}\\{'Restore'}"
 
                     else:
                         save_path = self.save_path
@@ -272,7 +270,7 @@ class WorkThread(threading.Thread):
                     self.format.m_gauge_state.SetValue(val)
 
             except Exception as info:
-                self.format.m_staticText_info.SetLabel(f"处理出错！，为{info},在{self.name}")
+                self.format.m_staticText_info.SetLabel(f"Processing error! For {info}, in {self.name}")
                 self.locker.acquire()
                 self.err_queue.put(info)
                 self.locker.release()
@@ -292,7 +290,7 @@ class SideWorkThread(threading.Thread):
 
             num = 0
             if self.setting[data.sk_output_group] == data.feg_by_is_able:
-                save_path = f'{self.save_path}\\拷贝'
+                save_path = f'{self.save_path}\\Copy'
             else:
                 save_path = self.save_path
 
@@ -305,14 +303,14 @@ class SideWorkThread(threading.Thread):
                 shutil.copyfile(name.tex_path, name.save_path)
 
                 self.format.m_gauge_state.SetValue(round(100 * (num / len(self.unable))))
-                self.format.m_staticText_info.SetLabel(f"当前：{name.cn_name},仅拷贝")
+                self.format.m_staticText_info.SetLabel(f"Currently: {name.cn_name}, Copy Only")
 
         self.format.m_gauge_state.SetValue(100)
 
 
 class WatchDogThread(threading.Thread):
     def __init__(self, work_queue, err_queue, able_group, lock, frame, setting, size, threads):
-        super(WatchDogThread, self).__init__(name="watch dog")
+        super(WatchDogThread, self).__init__(name="Watch dog")
         self.threads = threads
         self.size = size
         self.setting = setting
@@ -347,7 +345,7 @@ class WatchDogThread(threading.Thread):
 
     def exit_action(self):
         data = GlobalData()
-        self.format.m_staticText_info.SetLabel(f"完成，共{self.size}")
+        self.format.m_staticText_info.SetLabel(f"Completed, Total {self.size}")
         self.format.start = False
 
         self.format.m_gauge_state.SetValue(100)

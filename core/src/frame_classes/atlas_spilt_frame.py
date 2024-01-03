@@ -26,7 +26,7 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
 
         self.bg_size = tuple(self.m_bitmap_show.GetSize())
 
-        self.m_staticText_target_name.SetLabel(f'目标名称：{self.target.cn_name}')
+        self.m_staticText_target_name.SetLabel(f'Target name:{self.target.cn_name}')
 
         self.dialog = ...
 
@@ -55,13 +55,13 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
         self.m_bitmap_show.ClearBackground()
         self.m_bitmap_show.SetBitmap(temp)
 
-        self.m_staticText_info.SetLabel(f"当前正在显示{self.target.cn_name}->{self.names[index]}")
+        self.m_staticText_info.SetLabel(f"Currently showing{self.target.cn_name}->{self.names[index]}")
 
     def save_item(self, event):
         index = event.GetSelection()
         pic = self.items[self.names[index]]
 
-        self.dialog = wx.FileDialog(self, f"保存组件“{self.names[index]}”", defaultFile=f"{self.names[index]}.png",
+        self.dialog = wx.FileDialog(self, f"Save component“{self.names[index]}”", defaultFile=f"{self.names[index]}.png",
                                     wildcard="*.png",
                                     style=wx.FD_CHANGE_DIR | wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if wx.ID_OK == self.dialog.ShowModal():
@@ -69,7 +69,7 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
             pic.save(path)
 
     def save_all(self, event):
-        self.dialog = wx.DirDialog(self, f"保存组件“{self.target.cn_name}”",
+        self.dialog = wx.DirDialog(self, f"Save component“{self.target.cn_name}”",
                                    style=wx.DD_CHANGE_DIR | wx.DD_DIR_MUST_EXIST | wx.DD_NEW_DIR_BUTTON)
         if wx.ID_OK == self.dialog.ShowModal():
             path = self.dialog.GetPath()
@@ -80,4 +80,4 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
                 out_path = os.path.join(path, f'{key}.png')
                 self.items[key_raw].save(out_path)
 
-            self.m_staticText_info.SetLabel(f'完成导出，导出文件夹：{path}')
+            self.m_staticText_info.SetLabel(f'Complete the export and export the folder:{path}')

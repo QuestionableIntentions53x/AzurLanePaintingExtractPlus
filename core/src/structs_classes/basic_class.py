@@ -1,18 +1,16 @@
 # TODO: Collections is now deprecated in python 3.0+
 import collections.abc
 
-
 class KeyExistError(KeyError):
     def __init__(self, arg):
         self.arg = arg
 
-
 class BasicInfo(object):
     def __init__(self, name, val):
         """
-        基本结构单元类
-        :param name: 每一元素对应名称
-        :param val: 每一元素对应值
+        Basic structural unit class
+        :param name: Name corresponding to each element
+        :param val: Value corresponding to each element
         """
         self.name = name
         self._val = val
@@ -30,8 +28,8 @@ class BasicInfo(object):
 
     def rebuild_self(self, value):
         """
-        对自身的数据进行修改，用新数据覆盖原有
-        :param value: 携带覆盖原有数据的基本结构单元
+        Modify its own data by overlaying with new data
+        :param value: Basic structural unit carrying new data to overwrite the original
         :return:
         """
         if isinstance(value, BasicInfo):
@@ -39,12 +37,11 @@ class BasicInfo(object):
         else:
             raise ValueError
 
-
 class BasicInfoList(object):
     def __init__(self, item: collections.abc.Iterable = None):
         """
-        基本数据单元容器
-        :param item: 每一元素为基本数据单元或其扩展类的可迭代对象；可选，如果传递，将会基于该对象建立容器
+        Basic data unit container
+        :param item: Iterable object with each element as a basic data unit or its extended class; optional, if passed, the container will be established based on this object
         """
         self._info_dict = {}
         self._key_list = []
@@ -114,9 +111,9 @@ class BasicInfoList(object):
     @staticmethod
     def form_dict(values: dict = None):
         """
-        基于给定的字典生成容器
-        :param values: 给定的字典
-        :return: 容器对象
+        Generate a container based on the given dictionary
+        :param values: Given dictionary
+        :return: Container object
         """
         if values is None:
             values = {}
@@ -124,27 +121,27 @@ class BasicInfoList(object):
 
     def remove(self, item: collections.abc.Iterable):
         """
-        移除多个指定的元素
-        :param item: 需要移除的基本结构单元的可迭代对象
-        :return: 移除指定元素后的容器
+        Remove multiple specified elements
+        :param item: Iterable object of basic structural units to be removed
+        :return: Container after removing specified elements
         """
         return BasicInfoList(filter(lambda x: x not in item, self))
 
     def get_new(self, item: collections.abc.Iterable):
         """
-        用新的容器与原有的比较，查找新增的基本结构单元
-        :param item: 新的容器
-        :return: 储存新增基本结构单元的容器
+        Compare with the original container using a new container, and find newly added basic structural units
+        :param item: New container
+        :return: Container storing newly added basic structural units
         """
         return BasicInfoList(filter(lambda x: x not in self, item))
 
     def append_name(self, name, val, *, has_cn=False):
         """
-        添加新的元素，如果新元素名称已经存在就不添加
-        :param name: 新元素名称
-        :param val: 新元素数据
-        :param has_cn: 新元素本地化情况
-        :return: 新元素名称
+        Add a new element, do not add if the name of the new element already exists
+        :param name: Name of the new element
+        :param val: Data of the new element
+        :param has_cn: Localization status of the new element
+        :return: Name of the new element
         """
         if name not in self._info_dict:
             self[name] = BasicInfo(name, val)
@@ -155,45 +152,45 @@ class BasicInfoList(object):
 
     def append_self(self, value):
         """
-        添加新元素，基于基本容器单元
-        :param value: 要添加的基本容器单元
-        :return: 新元素名称
+        Add a new element based on the basic container unit
+        :param value: Basic container unit to be added
+        :return: Name of the new element
         """
         if isinstance(value, BasicInfo):
             self[value.name] = value
         else:
-            raise ValueError(f'{type(value)}is not able')
+            raise ValueError(f'{type(value)} is not able')
 
     def extend(self, values):
         """
-        扩充容器中的元素
-        :param values: 要添加基本结构单元组
-        :return: 无
+        Expand elements in the container
+        :param values: Basic structural unit group to be added
+        :return: None
         """
         if isinstance(values, collections.abc.Iterable):
             list(map(lambda _x: self.append_self(_x), values))
 
     def set_self(self, key, value):
         """
-        更新指定元素的数据（全部）
-        :param key: 指定元素的对应的键（名称）
-        :param value: 用于更新的基本容器单元
-        :return: 无
+        Update the data of the specified element (entirely)
+        :param key: Key (name) corresponding to the specified element
+        :param value: Basic container unit used for updating
+        :return: None
         """
         self[key].rebuild_self(value)
 
     def clear(self):
         """
-        清空所有数据
-        :return: 无
+        Clear all data
+        :return: None
         """
         self._key_list.clear()
         self._info_dict.clear()
 
     def get_index(self, value):
         """
-        获取对应元素的索引
-        :param value: 要查找的元素
+        Get the index of the corresponding element
+        :param value: Element to be searched
         :return:
         """
         if isinstance(value, BasicInfo):
@@ -209,8 +206,8 @@ class BasicInfoList(object):
 
     def is_in_dict(self, item):
         """
-        查找某一元素是否在本容器中
-        :param item: 被查找元素
+        Check if a certain element is in this container
+        :param item: Element to be searched
         :return: True/False
         """
         return item not in self._info_dict.keys()

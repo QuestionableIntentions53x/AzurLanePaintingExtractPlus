@@ -3,7 +3,7 @@ import re
 
 
 class SearchOrder(object):
-    # 搜索
+    # search
     @staticmethod
     def pattern_builder(x, y):
         """

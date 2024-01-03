@@ -21,8 +21,8 @@ class NameGroups(BasicInfoList):
 
 class NameInfo(BasicInfo):
     """
-    本地化处理类
-    去除后缀相同的对象放在一起
+    Localization processing class
+    Group objects with the same suffix removed and placed together
     """
 
     def __init__(self, name, val):
@@ -37,10 +37,10 @@ class NameInfo(BasicInfo):
 
     def add_location(self, key, name):
         """
-        先判断key是否是本组本地化对象
+        First check if the key is a localized object in this group
         :param key:
         :param name:
-        :return: bool 是否成功
+        :return: bool success or not
         """
         if key in self.all_location.keys():
             return False
@@ -50,7 +50,7 @@ class NameInfo(BasicInfo):
 
     def init_add2tree(self, tree: wx.TreeCtrl, root: wx.TreeItemId):
         """
-        初始化添加到树[创建title]
+        Initialize adding to the tree [create title]
         :param tree:
         :param root:
         :return:
@@ -59,14 +59,14 @@ class NameInfo(BasicInfo):
 
     def add2tree(self):
         """
-        添加本对象到目标tree中
+        Add this object to the target tree
         :return:
         """
         pass
 
     def add2tree_single(self, key="", value=""):
         """
-        添加单独项目到tree
+        Add a single item to the tree
         :param key:
         :param value:
         :return:
@@ -74,7 +74,7 @@ class NameInfo(BasicInfo):
 
     def transform2dict(self):
         """
-        转换为字典类型
+        Convert to dictionary type
         :return:
         """
         return self.all_location

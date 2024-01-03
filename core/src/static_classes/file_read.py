@@ -8,7 +8,7 @@ from core.src.structs_classes.extract_structs import PerWorkList
 
 
 class FileFilter(object):
-    # 文件打包
+    # File processing
 
     @staticmethod
     def file_deal(paths, info_list: PerWorkList, clear_list: bool = False, pattern=r'^[.\n]*$',
@@ -71,17 +71,17 @@ class FileFilter(object):
                 num += len(list(map(info_write2, path)))
 
                 if path_len == 0:
-                    return False, '导入完成，无新增项！'
+                    return False, 'Import completed, no new items!'
             else:
-                return False, '导入失败，无导入项！'
-        except Exception as info:  # (TypeError, KeyError, RuntimeError)as info:
+                return False, 'Import failed, no items to import!'
+        except Exception as info:
             #  raise
             print(info.__traceback__)
-            return False, '导入失败，发生错误！%s' % info
+            return False, 'Import failed, an error occurred! %s' % info
         else:
-            return True, '导入成功！ 成功导入%d个！' % num
+            return True, 'Import successful! Successfully imported %d items!' % num
 
-    # 递归读取文件
+    # Recursive file reading
     @staticmethod
     def build_return_list(x, y):
         x = list(x)

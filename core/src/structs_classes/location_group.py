@@ -16,7 +16,7 @@ class PerLocation(BasicInfo):
         self.id = ...
 
     def __str__(self):
-        return f"键->\"{self.name}\"；值->\"{self.val}\""
+        return f"Key->\"{self.name}\"; Value->\"{self.val}\""
 
     def add_to_tree(self, tree: wx.TreeCtrl, exist_root, new_root, cover_root):
         if self.state == dt.EXIST:
@@ -29,10 +29,10 @@ class PerLocation(BasicInfo):
             return
 
         item_root = tree.AppendItem(target_root, str(self))
-        tree.AppendItem(item_root, f"本地化原始名：”{self.name}“")
+        tree.AppendItem(item_root, f"Original Localization Name: \"{self.name}\"")
         if self.state == dt.COVER:
-            tree.AppendItem(item_root, f"原始本地化名称：”{self.old_data}“")
-        tree.AppendItem(item_root, f"本地化名：”{self.val}“")
+            tree.AppendItem(item_root, f"Original Localization Name: \"{self.old_data}\"")
+        tree.AppendItem(item_root, f"Localization Name: \"{self.val}\"")
 
 
 class LocationList(BasicInfoList):
@@ -48,9 +48,9 @@ class LocationList(BasicInfoList):
 
     def compare(self, values: dict, value_new: dict):
         """
-        比对，生成列表
-        :param values: 原始键值对
-        :param value_new: 新键值对
+        Compare and generate a list
+        :param values: Original key-value pairs
+        :param value_new: New key-value pairs
         :return:
         """
         for key, item in value_new.items():
@@ -69,9 +69,9 @@ class LocationList(BasicInfoList):
                     self.cover_count += 1
 
     def add_to_tree(self, tree: wx.TreeCtrl, root):
-        self.exist_root = tree.AppendItem(root, f"已经存在的本地化资源（{self.exist_count}）")
-        self.cover_root = tree.AppendItem(root, f"覆盖原有的本地化资源（{self.cover_count}）")
-        self.new_root = tree.AppendItem(root, f"新增的的本地化资源（{self.new_count}）")
+        self.exist_root = tree.AppendItem(root, f"Existing Localization Resources ({self.exist_count})")
+        self.cover_root = tree.AppendItem(root, f"Override Existing Localization Resources ({self.cover_count})")
+        self.new_root = tree.AppendItem(root, f"New Localization Resources ({self.new_count})")
 
         for value in self:
             value.add_to_tree(tree, self.exist_root, self.new_root, self.cover_root)

@@ -34,13 +34,13 @@ class LocationUpdate(MyDialogUpdateLocation):
         self.local_work.add_to_tree(self.m_treeCtrl_info, self.root)
 
     def update(self, data):
-        self.m_staticText_info.SetLabel("正在更新数据...")
+        self.m_staticText_info.SetLabel("Updating data...")
         for key, item in data.items():
             self.names[key] = item
         with open(os.path.join(self.path, "core\\assets\\names.json"), "w")as file:
             json.dump(self.names, file)
 
-        wx.MessageBox("完成!", "信息", wx.ICON_INFORMATION)
+        wx.MessageBox("Done!", "Message", wx.ICON_INFORMATION)
         self.Destroy()
 
     def request_info(self, event):
@@ -52,15 +52,15 @@ class LocationUpdate(MyDialogUpdateLocation):
                 if r.status_code == 200:
                     self.load_data = json.loads(r.text)
                 self.compare()
-                self.m_staticText_info.SetLabel(f"加载完成！来自{event.GetString()}提供的本地化方案")
+                self.m_staticText_info.SetLabel(f"Loading completed! From the localization solution provided by {event.GetString()}")
             except Exception as info:
                 wx.MessageBox(f"{info.__str__()}")
 
-        self.m_staticText_info.SetLabel(f"加载中，请稍后~~")
+        self.m_staticText_info.SetLabel(f"Loading, please wait~~")
         work()
 
     def load_file(self, event):
-        dialog = wx.FileDialog(self, "选择json文件", self.path, "Names.json", "*.json",
+        dialog = wx.FileDialog(self, "Select json file", self.path, "Names.json", "*.json",
                                wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_PREVIEW | wx.FD_FILE_MUST_EXIST)
 
         if wx.ID_OK == dialog.ShowModal():
@@ -71,7 +71,7 @@ class LocationUpdate(MyDialogUpdateLocation):
                 if isinstance(data, dict):
                     self.load_data = data
 
-            self.m_staticText_info.SetLabel("加载完成！来自本地文件")
+            self.m_staticText_info.SetLabel("Loading completed! From local file")
 
             self.compare()
 
@@ -80,20 +80,20 @@ class LocationUpdate(MyDialogUpdateLocation):
         canceled = False
         name = ''
         while not is_new_name:
-            dialog = wx.TextEntryDialog(parent=self, message="新增本地化资源标签（不能与已有的本地化资源标签同名）", caption="添加标签",
-                                        value=f"本地化资源-{self.exist_size + 1}")
+            dialog = wx.TextEntryDialog(parent=self, message="New localized resource label (cannot have the same name as an existing localized resource label)", caption="Add label",
+                                        value=f"Localized resources-{self.exist_size + 1}")
             if dialog.ShowModal() == wx.ID_OK:
                 name = dialog.GetValue()
                 if name not in self.available_list.keys():
                     is_new_name = True
                 else:
-                    wx.MessageBox("该标签已经存在！", "错误", wx.ICON_ERROR)
+                    wx.MessageBox("This label already exists!", "Error", wx.ICON_ERROR)
             else:
                 canceled = True
                 break
         if canceled:
             return
-        dialog_url = wx.TextEntryDialog(parent=self, message="新增本地化资源地址", caption="添加地址", value='')
+        dialog_url = wx.TextEntryDialog(parent=self, message="Add localized resource address", caption="Add address", value='')
         if dialog_url.ShowModal() == wx.ID_OK:
             url = dialog_url.GetValue()
             self.available_list[name] = url

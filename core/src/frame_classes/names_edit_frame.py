@@ -43,7 +43,7 @@ class NamesEditFrame(MyDialogKetValueSetting):
         index = event.GetSelection()
         key = self.key_group[index]
         value = self.edit_group.get(key)
-        wx.MessageBox(f"'{key}'->'{value}'", "信息")
+        wx.MessageBox(f"'{key}'->'{value}'", "information")
 
     def edit_exist_item(self, event):
         index = event.GetSelection()
@@ -58,13 +58,13 @@ class NamesEditFrame(MyDialogKetValueSetting):
         value = self.m_textCtrl_new_value.GetValue()
 
         if key == "" or value == "":
-            wx.MessageBox("键或值不能为空白！", "错误", wx.ICON_ERROR)
+           wx.MessageBox("Key or value cannot be blank!", "Error", wx.ICON_ERROR)
 
         else:
             if key in self.key_group:
                 index = self.key_group.index(key)
                 feedback = wx.MessageBox(
-                    f"【{key}】已经存在键组中，点击【确认】将会使用新值覆盖", "信息", wx.YES_NO | wx.ICON_INFORMATION)
+                    f"[{key}] already exists in the key group. Clicking [Confirm] will overwrite it with the new value", "Information", wx.YES_NO | wx.ICON_INFORMATION)
                 if feedback == wx.YES:
                     self.edit_group[key] = value
                     self.m_listBox_name_exist.SetString(
@@ -85,7 +85,7 @@ class NamesEditFrame(MyDialogKetValueSetting):
     def import_names(self, event):
         overwrite = 0
         new_item = 0
-        dialog = wx.FileDialog(self, "加载键值对文件（json）", os.path.join(self.path, "core\\assets"), "names.json", "*json",
+        dialog = wx.FileDialog(self, "Load key-value file (json)", os.path.join(self.path, "core\\assets"), "names.json", "*json",
                                wx.FD_FILE_MUST_EXIST | wx.FD_OPEN)
         is_ok = dialog.ShowModal()
         if is_ok:
@@ -94,7 +94,7 @@ class NamesEditFrame(MyDialogKetValueSetting):
                     temple = json.load(file)
                 for key, item in temple.items():
                     if not isinstance(item, str):
-                        raise TypeError("不可用文件")
+                        raise TypeError("Unavailable file")
                     self.edit_group[key] = item
                     if key in self.key_group:
                         overwrite += 1
@@ -107,15 +107,15 @@ class NamesEditFrame(MyDialogKetValueSetting):
                             self.string_format(key, item))
 
                 wx.MessageBox(
-                    f"导入键值对文件成功！\n\t覆盖：{overwrite}\n\t新增：{new_item}", "信息")
+                    f"Import key-value pair file successfully!\n\tOverwrite: {overwrite}\n\tAdd: {new_item}", "Information")
                 self.is_changed = True
             except Exception as info:
-                wx.MessageBox(f"导入键值对文件出现错误！\n{info.__str__()}")
+                wx.MessageBox(f"Error importing key-value pair file!\n{info.__str__()}")
 
     def close_save(self, event):
         if self.is_changed:
             feedback = wx.MessageBox(
-                "要应用这些变化吗？", "信息", wx.ICON_INFORMATION | wx.YES_NO)
+                "Apply these changes?", "Information", wx.ICON_INFORMATION | wx.YES_NO)
             if feedback == wx.YES:
                 save_data = {k.lower(): v for k, v in self.edit_group.items()}
                 with open(os.path.join(self.path, "core\\assets\\names.json"), "w")as file:
@@ -137,4 +137,4 @@ class NamesEditFrame(MyDialogKetValueSetting):
             data = self.miss_list.pop()
             self.m_textCtrl_new_key.SetValue(str(data))
         else:
-            MessageBox("未命名的本地化队列已经清空","警告",wx.OK|wx.ICON_WARNING);
+            MessageBox("The unnamed localization queue has been emptied","Warning",wx.OK|wx.ICON_WARNING)
