@@ -1,4 +1,5 @@
-import collections
+# TODO: Collections is now deprecated in python 3.0+
+import collections.abc
 
 import wx
 
@@ -35,7 +36,7 @@ class PerLocation(BasicInfo):
 
 
 class LocationList(BasicInfoList):
-    def __init__(self, item: collections.Iterable=None):
+    def __init__(self, item: collections.abc.Iterable=None):
         super(LocationList, self).__init__(item)
         self.exist_count = 0
         self.cover_count = 0

@@ -185,7 +185,7 @@ class ImageWork(object):
         if is_resize:
             scale = min(bg.size[0] / pic.size[0], bg.size[1] / pic.size[1])
             size = (round(pic.size[0] * scale), round(pic.size[1] * scale))
-            pic = pic.resize(size, PIL.Image.ANTIALIAS)
+            pic = pic.resize(size, PIL.Image.LANCZOS)
 
         x = round(bg.size[0] / 2 - pic.size[0] / 2)
         y = round(bg.size[1] / 2 - pic.size[1] / 2)

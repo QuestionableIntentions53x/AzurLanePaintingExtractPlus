@@ -451,7 +451,6 @@ class MainFrame(Mf):
                             val)
 
                     if is_ok:
-                        print(target.name)
                         if type_is == self.data.at_independent:
                             self.independent_target(target)
                         if type_is == self.data.at_face_match:

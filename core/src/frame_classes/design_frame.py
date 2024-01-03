@@ -11,6 +11,10 @@ import wx
 import wx.xrc
 import wx.adv
 
+# TODO: This is a bandaid fix, current wxPython layout is outdated
+import os
+os.environ["WXSUPPRESS_SIZER_FLAGS_CHECK"] = "1"
+
 ###########################################################################
 ## Class MainFrame
 ###########################################################################
