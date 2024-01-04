@@ -1,5 +1,9 @@
 # Azur Lane Painting Extract Plus (ALPEP) v0.1:
 
+## Current Release
+
+[Beta 0.1.1](https://github.com/QuestionableIntentions53x/AzurLanePaintingExtractPlus/releases/tag/Beta)
+
 ## Current State
 
 Hey there! QI here. This is a fork of [AzurLanePaintingExtract-v1.0](https://github.com/azurlane-doujin/AzurLanePaintingExtract-v1.0) that I plan to fully localize and add some minor improvements on top of. Currently, many of the features are non-functional, so expect to encounter some jank. The strings and comments were all translated from Chinese with a translator, but I haven't had the chance to clean it up yet.
