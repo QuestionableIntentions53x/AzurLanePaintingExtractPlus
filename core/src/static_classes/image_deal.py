@@ -46,7 +46,7 @@ class ImageWork(object):
         return pic
 
     @staticmethod
-    def division_builder(draw_pic_list, tex_pos_list, pic):
+    def division_builder(output, input, pic):
         """
         Constructs a function that returns segments of the given image based on the texture and mesh data provided
         :param draw_pic_list: List of output corners corners
@@ -62,27 +62,27 @@ class ImageWork(object):
             """
             # Get the three corners of input and output
             #   (they are stored with (1,1) as the origin so they need to be offset)
-            print_p = [draw_pic_list[val[0] - 1], draw_pic_list[val[1] - 1], draw_pic_list[val[2] - 1]]
-            cut_p   = [tex_pos_list[val[0] - 1],  tex_pos_list[val[1] - 1],  tex_pos_list[val[2] - 1]]
+            output_corners = [output[val[0] - 1], output[val[1] - 1], output[val[2] - 1]]
+            input_corners  = [input[val[0] - 1],  input[val[1] - 1],  input[val[2] - 1]]
 
             # Of the three output corners, find the smallest x and y coordinates (top left)
-            print_area = [min(print_p[0][0], print_p[1][0], print_p[2][0]),
-                          min(print_p[0][1], print_p[1][1], print_p[2][1])]
+            print_pos =  [min(output_corners[0][0], output_corners[1][0], output_corners[2][0]),
+                          min(output_corners[0][1], output_corners[1][1], output_corners[2][1])]
 
             # Of the three input corners, find the smallest x and y coordinates (top left)
-            cut_x = round(min(cut_p[0][0], cut_p[1][0], cut_p[2][0]))
-            cut_y = round(min((cut_p[0][1], cut_p[1][1], cut_p[2][1])))
+            cut_x = round(min(input_corners[0][0], input_corners[1][0], input_corners[2][0]))
+            cut_y = round(min((input_corners[0][1], input_corners[1][1], input_corners[2][1])))
 
             # Of the three input corners, find the largest x and y coordinates (bottom right)
-            end_x = round((max(cut_p[0][0], cut_p[1][0], cut_p[2][0])))
-            end_y = round((max(cut_p[0][1], cut_p[1][1], cut_p[2][1])))
+            end_x = round((max(input_corners[0][0], input_corners[1][0], input_corners[2][0])))
+            end_y = round((max(input_corners[0][1], input_corners[1][1], input_corners[2][1])))
 
             # The rect defining the segment to cut out
             cut_size = (cut_x, cut_y, end_x, end_y)
 
             # Crop the specified area
             cut = pic.crop(cut_size)
-            return cut, print_area
+            return cut, print_pos
 
         return division
 
@@ -238,14 +238,40 @@ class ImageWork(object):
         # Get the current four corners of the texture (tex_pos) and the four corners they will be moved to (draw_pic)
         # Print pos is a tuple of image source and destination corners
         draw_pic, tex_pos, print_pos = ImageWork.file_analyze(texture.size, mesh_path)
-        draw_pic = list(draw_pic)
-
+        
         # Create a new canvas
         pic = PIL.Image.new("RGBA", texture.size, (255, 255, 255, 0))
         
-        # TODO: Skip every other print_pos entry since the data is redundant 
+        # Skip every other print_pos entry since the data is redundant 
+        print_pos = list(filter(lambda x: (x[1] % 4 == 2), list(print_pos)))
+
         # The draw_pic positions are stored with their y values inverted, so they need to be inverted
-        draw_pic = (map(lambda x: [(x[0]), (img.size[1] - x[1])], draw_pic))
+        draw_pic = list(map(lambda x: [(x[0]), (img.size[1] - x[1])], list(draw_pic)))
+        
+        tex_pos = list(tex_pos)
+        
+        # I have no clue why each section ends up being croped on all sides and offset by one, but it is...
+
+        for pos in range(int(len(tex_pos) / 4)):
+            tex_pos[pos * 4 + 0][0] -= 1
+            tex_pos[pos * 4 + 2][1] -= 1
+            tex_pos[pos * 4 + 3][1] -= 1
+            tex_pos[pos * 4 + 3][0] -= 1
+        
+        for pos in range(int(len(draw_pic) / 4)):
+            draw_pic[pos * 4 + 0][0] -= 1
+            draw_pic[pos * 4 + 0][1] += 1
+            draw_pic[pos * 4 + 1][0] -= 1
+            draw_pic[pos * 4 + 1][1] -= 1
+            draw_pic[pos * 4 + 2][0] += 1
+            draw_pic[pos * 4 + 2][1] -= 1
+            draw_pic[pos * 4 + 3][0] += 1
+            draw_pic[pos * 4 + 3][1] += 1
+        
+        # TODO: just keep these three as lists instead of sending them as maps
+        draw_pic = map(lambda x: (x), draw_pic)
+        tex_pos = map(lambda x: (x), tex_pos)
+        print_pos = map(lambda x: (x), print_pos)
 
         # Cut
         restore = ImageWork.spilt_texture(tex_pos, draw_pic, print_pos, texture.size[1], img)
