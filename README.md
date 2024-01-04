@@ -44,7 +44,7 @@ The whole process as of right now is as follows:
 
 ![Step5](https://github.com/QuestionableIntentions53x/AzurLanePaintingExtractPlus/blob/1.6/core/assets/Step5.png)
 
-![Step5-1](https://github.com/QuestionableIntentions53x/AzurLanePaintingExtractPlus/blob/1.6/core/assets/Step5-1.png)
+![Step5-1](https://github.com/QuestionableIntentions53x/AzurLanePaintingExtractPlus/blob/1.6/core/assets/Step5-2.png)
 
 6. The final step is to copy paste the modded texture file to the game files
 
