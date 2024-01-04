@@ -7,3 +7,4 @@ core/assets/*.spec
 build/
 dist/
 main.spec
+TODO.md
