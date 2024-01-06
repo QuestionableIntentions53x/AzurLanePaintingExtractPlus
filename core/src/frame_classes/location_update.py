@@ -43,14 +43,42 @@ class LocationUpdate(MyDialogUpdateLocation):
         wx.MessageBox("Done!", "Message", wx.ICON_INFORMATION)
         self.Destroy()
 
+    # TODO: Load localization file found in height_setting.json for all languages
     def request_info(self, event):
         index = event.GetString()
 
         def work():
             try:
                 r = requests.get(self.available_list[index], timeout=1000)
-                if r.status_code == 200:
-                    self.load_data = json.loads(r.text)
+                # TODO: Place this in a config file too
+                f = requests.get("https://raw.githubusercontent.com/AzurLaneTools/AzurLaneData/main/EN/ShareCfg/painting_filte_map.json", timeout=1000)
+                if r.status_code == 200 and f.status_code == 200:
+                    raw = json.loads(r.text)
+                    names = dict()
+                    
+                    # Load base ship varieties
+                    for ship in raw:
+                        file_name = str(raw[ship]["painting"].lower())
+                        name = raw[ship]["name"]
+                        # Add the ship's name after the skin's name (exclude retrofits since it already has their name)
+                        if name.find("(Retrofit)") == -1:
+                            if file_name[:file_name.find("_")] in names:
+                                name += " (" + names[file_name[:file_name.find("_")]] + ")"
+                            elif file_name[:file_name.find("_", file_name.find("_") + 1)] in names:
+                                name += " (" + names[file_name[:file_name.find("_", file_name.find("_") + 1)]] + ")"
+                        names[file_name] = name
+                    
+                    extra_textures_raw = json.loads(f.text)
+                    
+                    # Load all other assets related to the ship (backgrounds, rigging, etc)
+                    for ship in extra_textures_raw:
+                        if(ship == "all"):
+                            continue
+                        for skin in extra_textures_raw[ship]["res_list"]:
+                            if skin.endswith("_tex"):
+                                names[skin.removeprefix("painting/").removesuffix("_tex").lower()] = names[extra_textures_raw[ship]["key"]]
+
+                    self.load_data = names
                 self.compare()
                 self.m_staticText_info.SetLabel(f"Loading completed! From the localization solution provided by {event.GetString()}")
             except Exception as info:

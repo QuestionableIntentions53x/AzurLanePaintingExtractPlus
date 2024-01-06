@@ -1117,7 +1117,7 @@ class MyDialogUpdateLocation ( wx.Dialog ):
 
 		bSizer26.Add( bSizer35, 0, wx.EXPAND, 5 )
 
-		m_listBox_selectChoices = [ u"OSSSY152" ]
+		m_listBox_selectChoices = [ u"AzurLaneTools" ]
 		self.m_listBox_select = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listBox_selectChoices, wx.LB_NEEDED_SB )
 		bSizer26.Add( self.m_listBox_select, 1, wx.ALL|wx.EXPAND, 5 )
 
