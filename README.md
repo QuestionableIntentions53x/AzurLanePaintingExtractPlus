@@ -21,7 +21,7 @@ The whole process as of right now is as follows:
     | `_n_` | Retrofit |
     | `_g_` | Oath |
     | `_alter_` | META |
-    | `_ex_` | Research ships |
+    | `_ex_` | Damaged ships (ripped/revealing clothes) |
     | `_idol_` or `_idolns_` | MUSE |
     | `_younv_` | Child ships |
 
@@ -54,8 +54,7 @@ The whole process as of right now is as follows:
 
 ## Future Development
 
-On top of revamping the original features, I plan to turn the asset conversion and editing process into a library
-Better localization will come in the future
+On top of revamping the original features, I plan to turn the asset conversion and editing process into a library. Better localization will come in the future.
 
 ## Contributions
 
