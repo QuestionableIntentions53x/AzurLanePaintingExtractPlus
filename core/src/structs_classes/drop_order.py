@@ -4,6 +4,9 @@ from itertools import filterfalse
 
 import wx
 
+import gettext
+_ = gettext.gettext
+
 import core.src.structs_classes.extract_structs as es
 from core.src.static_classes.file_read import FileFilter
 from core.src.static_classes.static_data import GlobalData
@@ -24,7 +27,7 @@ class DropOrder(wx.FileDropTarget):
         file_names = filenames
         try:
             file_names = list(file_names)
-            self.frame.m_staticText_info.SetLabel(f"Start importing {len(filenames)} files")
+            self.frame.m_staticText_info.SetLabel(_("Start importing {} files").format(len(filenames)))
 
             dir_name = (filter(lambda temple_value: not os.path.isfile(temple_value), file_names))
             dir_name = map(lambda temple_value: FileFilter.all_file(temple_value), dir_name)

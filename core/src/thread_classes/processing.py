@@ -3,6 +3,9 @@ import re
 import time
 from multiprocessing import connection, Pool, Pipe
 
+import gettext
+_ = gettext.gettext
+
 from core.src.static_classes.image_deal import ImageWork
 from core.src.structs_classes.extract_structs import PerInfo
 
@@ -11,7 +14,7 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
     print(process_id, count)
     try:
         now_info: PerInfo = target
-        frame.m_staticText_info.SetLabel("Current %dth! As: %s Type - Direct Restoration" % (count, now_info.cn_name))
+        frame.m_staticText_info.SetLabel(_("Current {}th! As: {} Type - Direct Restoration").format(count, now_info.cn_name))
 
         now_info.is_save_as_cn = frame.setting[data.sk_use_cn_name]
 
@@ -27,15 +30,15 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
             if pattern_skin.match(now_info.name) is not None:
                 save_path = f"{save}\\Skin"
             elif pattern_marry.match(now_info.name) is not None:
-                save_path = f"{save}\\Wedding"
+                save_path = f"{save}\\Promise"
             elif pattern_power.match(now_info.name) is not None:
-                save_path = f"{save}\\Transformation"
+                save_path = f"{save}\\Retrofit"
             elif pattern_self.match(now_info.name) is not None:
-                save_path = f"{save}\\OriginalSkin"
+                save_path = f"{save}\\Default_Skin"
             elif pattern_young.match(now_info.name) is not None:
-                save_path = f"{save}\\Youngify"
+                save_path = f"{save}\\Young"
             elif data.fp_u_skin.match(now_info.name) is not None:
-                save_path = f"{save}\\MicroArmor"
+                save_path = f"{save}\\Muse"
             else:
                 save_path = f"{save}\\Other"
         elif frame.setting[data.sk_output_group] == data.feg_by_name:
@@ -71,7 +74,7 @@ def worker(target, save, frame, data, count, size, pipe: connection.Connection):
         val = round(100 * (count / size))
         frame.m_gauge_state.SetValue(val)
     except KeyError as info:
-        frame.m_staticText_info.SetLabel(f"Processing error! For {info}")
+        frame.m_staticText_info.SetLabel(_("Processing error! For {}").format(info))
         print(info)
         pipe.send((info, process_id))
 

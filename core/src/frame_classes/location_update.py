@@ -4,6 +4,9 @@ import os
 import requests
 import wx
 
+import gettext
+_ = gettext.gettext
+
 from .design_frame import MyDialogUpdateLocation
 from ..structs_classes.location_group import LocationList
 
@@ -34,13 +37,13 @@ class LocationUpdate(MyDialogUpdateLocation):
         self.local_work.add_to_tree(self.m_treeCtrl_info, self.root)
 
     def update(self, data):
-        self.m_staticText_info.SetLabel("Updating data...")
+        self.m_staticText_info.SetLabel(_("Updating data..."))
         for key, item in data.items():
             self.names[key] = item
         with open(os.path.join(self.path, "core\\assets\\names.json"), "w")as file:
             json.dump(self.names, file)
 
-        wx.MessageBox("Done!", "Message", wx.ICON_INFORMATION)
+        wx.MessageBox(_("Done!"), _("Message"), wx.ICON_INFORMATION)
         self.Destroy()
 
     # TODO: Load localization file found in height_setting.json for all languages
@@ -80,15 +83,15 @@ class LocationUpdate(MyDialogUpdateLocation):
 
                     self.load_data = names
                 self.compare()
-                self.m_staticText_info.SetLabel(f"Loading completed! From the localization solution provided by {event.GetString()}")
+                self.m_staticText_info.SetLabel(_("Loading completed: Localization provided by {}").format(event.GetString()))
             except Exception as info:
                 wx.MessageBox(f"{info.__str__()}")
 
-        self.m_staticText_info.SetLabel(f"Loading, please wait~~")
+        self.m_staticText_info.SetLabel(_("Loading, please wait..."))
         work()
 
     def load_file(self, event):
-        dialog = wx.FileDialog(self, "Select json file", self.path, "Names.json", "*.json",
+        dialog = wx.FileDialog(self, _("Select json file"), self.path, "Names.json", "*.json",
                                wx.FD_OPEN | wx.FD_CHANGE_DIR | wx.FD_PREVIEW | wx.FD_FILE_MUST_EXIST)
 
         if wx.ID_OK == dialog.ShowModal():
@@ -99,7 +102,7 @@ class LocationUpdate(MyDialogUpdateLocation):
                 if isinstance(data, dict):
                     self.load_data = data
 
-            self.m_staticText_info.SetLabel("Loading completed! From local file")
+            self.m_staticText_info.SetLabel(_("Loading completed! From local file"))
 
             self.compare()
 
@@ -108,20 +111,20 @@ class LocationUpdate(MyDialogUpdateLocation):
         canceled = False
         name = ''
         while not is_new_name:
-            dialog = wx.TextEntryDialog(parent=self, message="New localized resource label (cannot have the same name as an existing localized resource label)", caption="Add label",
-                                        value=f"Localized resources-{self.exist_size + 1}")
+            dialog = wx.TextEntryDialog(parent=self, message=_("New localization source"), caption=_("Add label"),
+                                        value=_("Locale-{}").format(self.exist_size + 1))
             if dialog.ShowModal() == wx.ID_OK:
                 name = dialog.GetValue()
                 if name not in self.available_list.keys():
                     is_new_name = True
                 else:
-                    wx.MessageBox("This label already exists!", "Error", wx.ICON_ERROR)
+                    wx.MessageBox(_("Localization name already exists!"), _("Error"), wx.ICON_ERROR)
             else:
                 canceled = True
                 break
         if canceled:
             return
-        dialog_url = wx.TextEntryDialog(parent=self, message="Add localized resource address", caption="Add address", value='')
+        dialog_url = wx.TextEntryDialog(parent=self, message=_("Web address to json file"), caption=_("Add address"), value='')
         if dialog_url.ShowModal() == wx.ID_OK:
             url = dialog_url.GetValue()
             self.available_list[name] = url

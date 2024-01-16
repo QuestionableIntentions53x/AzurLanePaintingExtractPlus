@@ -5,6 +5,9 @@ import shutil
 import threading
 import time
 
+import gettext
+_ = gettext.gettext
+
 from core.src.frame_classes.design_frame import MainFrame
 from core.src.static_classes.image_deal import ImageWork
 from core.src.static_classes.static_data import GlobalData
@@ -44,7 +47,7 @@ class RestoreThread(threading.Thread):
             try:
                 if self.index < len(self.able) and not self.stop:
                     now_info: PerInfo = self.able[self.index]
-                    self.format.m_staticText_info.SetLabel("Currently at %d! For: %s Type - Direct Restore" % (self.index + 1, now_info.cn_name))
+                    self.format.m_staticText_info.SetLabel(_("Currently at {}! For: {} Type - Direct Restore").format(self.index + 1, now_info.cn_name))
 
                     now_info.is_save_as_cn = self.setting[data.sk_use_cn_name]
 
@@ -62,10 +65,10 @@ class RestoreThread(threading.Thread):
                             save_path = f"{self.save_path}\\Skin"
 
                         elif pattern_marry.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\Wedding"
+                            save_path = f"{self.save_path}\\Promise"
 
                         elif pattern_power.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\Build_Up"
+                            save_path = f"{self.save_path}\\Retrofit"
 
                         elif pattern_self.match(now_info.name) is not None:
                             save_path = f"{self.save_path}\\Default_Skin"
@@ -74,7 +77,7 @@ class RestoreThread(threading.Thread):
                             save_path = f"{self.save_path}\\Young"
 
                         elif data.fp_u_skin.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\μ_Armor"
+                            save_path = f"{self.save_path}\\Muse"
 
                         else:
                             save_path = f"{self.save_path}\\Other"
@@ -117,7 +120,7 @@ class RestoreThread(threading.Thread):
                     self.format.m_gauge_state.SetValue(val)
                     self.index += 1
             except KeyError as info:
-                self.format.m_staticText_info.SetLabel(f"Processing error! For {info}")
+                self.format.m_staticText_info.SetLabel(_("Processing error! For {}").format(info))
                 raise
         if self.stop:
             return
@@ -140,9 +143,9 @@ class RestoreThread(threading.Thread):
                 shutil.copyfile(name.tex_path, name.save_path)
 
                 self.format.m_gauge_state.SetValue(round(100 * (num / len(self.unable))))
-                self.format.m_staticText_info.SetLabel(f"Current: {name.cn_name}, Copy Only")
+                self.format.m_staticText_info.SetLabel(_("Current: {}, Copy Only").format(name.cn_name))
 
-        self.format.m_staticText_info.SetLabel(f"Completed, Total {len(self.able) + len(self.unable)}")
+        self.format.m_staticText_info.SetLabel(_("Completed, Total {}").format(len(self.able) + len(self.unable)))
         self.format.start = False
 
         if self.stop:
@@ -197,7 +200,7 @@ class WorkThread(threading.Thread):
 
                     # Do the job!
                     now_info: PerInfo = target
-                    self.format.m_staticText_info.SetLabel("Currently at %d! For: %s Type - Direct Restore" % (count + 1, now_info.cn_name))
+                    self.format.m_staticText_info.SetLabel(_("Currently at {}! For: {} Type - Direct Restore").format(count + 1, now_info.cn_name))
 
                     now_info.is_save_as_cn = self.setting[data.sk_use_cn_name]
 
@@ -215,10 +218,10 @@ class WorkThread(threading.Thread):
                             save_path = f"{self.save_path}\\Skin"
 
                         elif pattern_marry.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\Wedding"
+                            save_path = f"{self.save_path}\\Promise"
 
                         elif pattern_power.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\Build_Up"
+                            save_path = f"{self.save_path}\\Retrofit"
 
                         elif pattern_self.match(now_info.name) is not None:
                             save_path = f"{self.save_path}\\Default_Skin"
@@ -227,7 +230,7 @@ class WorkThread(threading.Thread):
                             save_path = f"{self.save_path}\\Young"
 
                         elif data.fp_u_skin.match(now_info.name) is not None:
-                            save_path = f"{self.save_path}\\μ_Armor"
+                            save_path = f"{self.save_path}\\Muse"
 
                         else:
                             save_path = f"{self.save_path}\\Other"
@@ -270,7 +273,7 @@ class WorkThread(threading.Thread):
                     self.format.m_gauge_state.SetValue(val)
 
             except Exception as info:
-                self.format.m_staticText_info.SetLabel(f"Processing error! For {info}, in {self.name}")
+                self.format.m_staticText_info.SetLabel(_("Processing error! For {}, in {}").format(info, self.name))
                 self.locker.acquire()
                 self.err_queue.put(info)
                 self.locker.release()
@@ -303,7 +306,7 @@ class SideWorkThread(threading.Thread):
                 shutil.copyfile(name.tex_path, name.save_path)
 
                 self.format.m_gauge_state.SetValue(round(100 * (num / len(self.unable))))
-                self.format.m_staticText_info.SetLabel(f"Currently: {name.cn_name}, Copy Only")
+                self.format.m_staticText_info.SetLabel(_("Currently: {}, Copy Only").format(name.cn_name))
 
         self.format.m_gauge_state.SetValue(100)
 
@@ -345,7 +348,7 @@ class WatchDogThread(threading.Thread):
 
     def exit_action(self):
         data = GlobalData()
-        self.format.m_staticText_info.SetLabel(f"Completed, Total {self.size}")
+        self.format.m_staticText_info.SetLabel(_("Completed, Total {}").format(self.size))
         self.format.start = False
 
         self.format.m_gauge_state.SetValue(100)

@@ -7,6 +7,9 @@ import threading
 
 import wx
 
+import gettext
+_ = gettext.gettext
+
 from core.src.frame_classes.SpriteSpiltFrame import SpriteSplitFrame
 from core.src.frame_classes.atlas_spilt_frame import AtlasSpiltFrame
 from core.src.frame_classes.design_frame import MainFrame as Mf
@@ -174,7 +177,7 @@ class MainFrame(Mf):
         :return: None
         """
 
-        self.__dialog = wx.TextEntryDialog(parent=None, message='', caption="Name of independent combination",
+        self.__dialog = wx.TextEntryDialog(parent=None, message='', caption=_("Name of duplicated ship instance"),
                                            value=f"{target.name}-#{target.sub_data}", )
 
         is_ok = self.__dialog.ShowModal()
@@ -182,18 +185,18 @@ class MainFrame(Mf):
         if is_ok == wx.ID_OK:
             name = self.__dialog.GetValue()
             if name in self.painting_work:
-                wx.MessageBox("The name already exists!", "Error", wx.OK | wx.ICON_ERROR)
+                wx.MessageBox(_("The name already exists!"), _("Error"), wx.OK | wx.ICON_ERROR)
                 self.independent_target(target)
             else:
                 target.independent(name, self.m_treeCtrl_info, self.root)
 
     def face_match_target(self, target: PerInfo):
         if not target.is_able_work:
-            self.m_staticText_info.SetLabel("Head change failed! Must be a restoreable object")
+            self.m_staticText_info.SetLabel(_("Face change failed! Must be a restoreable object"))
             return
-        self.m_staticText_info.SetLabel("Start changing the head!")
-        data = wx.SingleChoiceDialog(self, "Selection type:", "Type selection", [
-                                     "Facial expression additional mode (window size: 680 X 470", "Ship decoration-character splicing mode (window size: 1920X1080 "])
+        self.m_staticText_info.SetLabel(_("Started changing face"))
+        data = wx.SingleChoiceDialog(self, "", _("Select Accessory Type:"), [
+                                     _("Facial expression (680x470"), _("Ship decoration (1920x1080)")]) #TODO: add custom?
         if wx.ID_OK == data.ShowModal():
             info = data.GetSelection()
             type_is = False
@@ -204,10 +207,10 @@ class MainFrame(Mf):
 
     def atlas_split_target(self, target: PerInfo):
         if not os.path.isfile(target.tex_path):
-            self.m_staticText_info.SetLabel("Cutting failed, there must be an available Texture2D file")
+            self.m_staticText_info.SetLabel(_("Cutting failed, there must be an available Texture2D file"))
             return
         else:
-            self.m_staticText_info.SetLabel("Start changing the head!")
+            self.m_staticText_info.SetLabel(_("Start changing the head!"))
             self.__dialog = AtlasSpiltFrame(self, target)
             self.__dialog.ShowModal()
 
@@ -216,11 +219,11 @@ class MainFrame(Mf):
         self.m_treeCtrl_info.DeleteChildren(target.tree_ID)
         target.append_item_tree(self.m_treeCtrl_info)
         self.m_staticText_info.SetLabel(
-            f"{target.cn_name} has been converted and is now {target.must_able}")
+            _("{} has been converted and is now {}").format(target.cn_name, target.must_able)) #TODO: Figure out what must-able means
 
     def remove_target(self, target: PerInfo):
         info = wx.MessageBox(
-            f"Are you sure you want to remove\n{target}\n?", 'Information', wx.YES_NO | wx.ICON_INFORMATION)
+            _("Are you sure you want to remove\n{}").format(target), _("Information"), wx.YES_NO | wx.ICON_INFORMATION)
         if info == wx.YES:
             self.m_treeCtrl_info.Delete(target.tree_ID)
             self.painting_work.remove([target])
@@ -229,10 +232,10 @@ class MainFrame(Mf):
 
     def split_target_only(self, target: PerInfo):
         if not target.is_able_work:
-            self.m_staticText_info.SetLabel(f"{target} cannot be cut and is a non-reducible object")
+            self.m_staticText_info.SetLabel(_("{} cannot be cut and is a non-reducible object").format(target))
             return
         self.__dialog = wx.DirDialog(
-            self, "Select the save folder", self.work_path, wx.DD_NEW_DIR_BUTTON | wx.DD_DIR_MUST_EXIST)
+            self, _("Select output folder"), self.work_path, wx.DD_NEW_DIR_BUTTON | wx.DD_DIR_MUST_EXIST)
         if wx.ID_OK == self.__dialog.ShowModal():
             path = self.__dialog.GetPath()
             if self.setting_info[self.data.sk_make_new_dir]:
@@ -240,17 +243,17 @@ class MainFrame(Mf):
                 os.makedirs(path, exist_ok=True)
                 ImageWork.split_only_one(target, path)
                 self.m_staticText_info.SetLabel(
-                    f"{target.cn_name} cutting completed, saved in {path}")
+                    _("{} cutting completed, saved to path: {}").format(target.cn_name, path))
 
     def sprite_split(self, target: PerInfo):
         if not os.path.isfile(target.tex_path):
-            self.m_staticText_info.SetLabel(f"{target} cannot be cut, at least one Texture2D is required")
+            self.m_staticText_info.SetLabel(_("{} cannot be cut, at least one Texture2D is required").format(target))
             return
-        self.m_staticText_info.SetLabel("Start Sprite cutting!")
+        self.m_staticText_info.SetLabel(_("Start Sprite cutting!"))
         self.__dialog = SpriteSplitFrame(self, target)
         self.__dialog.ShowModal()
 
-    def change_local(self, target: PerInfo):
+    """def change_local(self, target: PerInfo):
         src_name = target.name
         local_name = target.cn_name
 
@@ -264,15 +267,15 @@ class MainFrame(Mf):
             else:
                 target.cn_name = data
                 self.names[src_name] = data
-                self.refeash(None)
+                self.refeash(None)"""
 
     def import_png(self, target: PerInfo):
         
-        dialog = wx.FileDialog(parent=self, message="PNG Path", defaultDir=target.tex_path[:target.tex_path.rfind('\\')],
+        dialog = wx.FileDialog(parent=self, message=_("PNG Path"), defaultDir=target.tex_path[:target.tex_path.rfind('\\')],
                                 wildcard="*.png",style=wx.DD_DEFAULT_STYLE)
         if dialog.ShowModal() == wx.ID_OK:
             success, info = ImageWork.deconstruct_tool(target, dialog.GetPath())
-            # success.format.m_staticText_info.SetLabel(info)
+            self.m_staticText_info.SetLabel(info)
             
         return
 
@@ -298,7 +301,7 @@ class MainFrame(Mf):
         #                                 self.painting_work.build_unable(), self, self.setting_info,
         #                                 self.names, self.save_path, self.setting_info[self.data.sk_ignore_case])
 
-        self.m_staticText_info.SetLabel("Reset restoration progress!")
+        self.m_staticText_info.SetLabel(_("Reset restoration progress!"))
 
         self.m_gauge_state.SetValue(0)
 
@@ -310,7 +313,7 @@ class MainFrame(Mf):
         :return: none
         """
         target = self.name
-        self.__dialog = wx.FileDialog(self, "keep", os.getcwd(), f'{target.cn_name}.png', "*.png",
+        self.__dialog = wx.FileDialog(self, _("Save-Azur Lane"), os.getcwd(), f'{target.cn_name}.png', "*.png",
                                       wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_PREVIEW)
 
         if self.__dialog.ShowModal() == wx.ID_OK:
@@ -380,7 +383,7 @@ class MainFrame(Mf):
         :return: none
         """
         data = self.data
-        self.__dialog = wx.DirDialog(self, "Save", os.getcwd(),
+        self.__dialog = wx.DirDialog(self, _("Save"), os.getcwd(),
                                      style=wx.DD_DIR_MUST_EXIST | wx.DD_CHANGE_DIR | wx.DD_NEW_DIR_BUTTON
                                            | wx.DD_DEFAULT_STYLE)
         if self.__dialog.ShowModal() == wx.ID_OK:
@@ -427,7 +430,7 @@ class MainFrame(Mf):
 
             # If yes, show preview image
             if is_ok:
-                self.m_staticText_info.SetLabel(f"choose:{name.cn_name}")
+                self.m_staticText_info.SetLabel(_("choose:{}").format(name.cn_name))
                 
                 self.select_data = self.name = name
                 self.thread_quick = QuickRestore(name, self)
@@ -456,21 +459,21 @@ class MainFrame(Mf):
                         self.thread_quick = QuickRestore(value, self)
                         self.thread_quick.start()
                         self.select_data = value
-                        is_able = "Previewable"
+                        is_able = _("Previewable")
                     else:
-                        is_able = "Not previewable"
+                        is_able = _("Not previewable")
 
                     if pos:
-                        pos = "single type"
+                        pos = _("single type")
                     else:
-                        pos = "list"
+                        pos = _("list")
                     if type_is:
-                        type_is = "texture file"
+                        type_is = _("texture file")
                     else:
-                        type_is = "mesh file"
+                        type_is = _("mesh file")
 
                     self.m_staticText_info.SetLabel(
-                        f"Select: {pos}{type_is} in {name.cn_name}: {self.m_treeCtrl_info.GetItemText(val)}, {is_able}")
+                        _("Select: {}{} in {}: {}, {}").format(pos, type_is, name.cn_name, self.m_treeCtrl_info.GetItemText(val), is_able))
 
                 # Not found, search for function buttons
                 else:
@@ -496,8 +499,8 @@ class MainFrame(Mf):
                             self.split_target_only(target)
                         if type_is == self.data.at_sprite_split:
                             self.sprite_split(target)
-                        if type_is == self.data.at_change_local:
-                            self.change_local(target)
+                        """if type_is == self.data.at_change_local:
+                            self.change_local(target)"""
                         if type_is == self.data.at_import_sprite:
                             self.import_png(target)
 
@@ -506,7 +509,7 @@ class MainFrame(Mf):
         is_ok = self.change_path(
             self.is_single, self.type_is, self.name, self.index)
         if not is_ok:
-            wx.MessageBox("No data!", "Error", wx.OK | wx.ICON_ERROR)
+            wx.MessageBox(_("No data!"), _("Error"), wx.OK | wx.ICON_ERROR)
             return
 
         self.thread_quick = QuickRestore(self.name, self)
@@ -519,22 +522,22 @@ class MainFrame(Mf):
         :return:
         """
         data = self.data
-        show = ["Export all can be restored", "Copy all cannot be restored", "Export selected items", "Export current list items"]
+        show = ["Export restored assets", "Export unrestorable assets", "Export selected asset", "Export all"]
         #Add unavailable suffix
         if len(self.painting_work.build_able()) == 0:
-            show[data.et_all] += "(unavailable)"
+            show[data.et_all] += _("(unavailable)")
         if len(self.painting_work.build_unable()) == 0:
-            show[data.et_copy_only] += "(not available)"
+            show[data.et_copy_only] += _("(unavailable)")
         if self.name is None:
-            show[data.et_select] += "(unavailable)"
+            show[data.et_select] += _("(unavailable)")
         if self.filter_type or self.search_type:
             if self.view_work.__len__() == 0:
-                show[data.et_list_item] += "(unavailable)"
+                show[data.et_list_item] += _("(unavailable)")
         else:
             if len(self.painting_work) == 0:
-                show[data.et_list_item] += "(unavailable)"
+                show[data.et_list_item] += _("(unavailable)")
 
-        self.__dialog = wx.SingleChoiceDialog(self, "Choice type", "Choose export type", show)
+        self.__dialog = wx.SingleChoiceDialog(self, "", _("Choose export type"), show)
 
         if self.__dialog.ShowModal() == wx.ID_OK:
             index = self.__dialog.GetSelection()
@@ -542,10 +545,10 @@ class MainFrame(Mf):
             if index == data.et_all:
                 # If no list is available, exit export
                 if len(self.painting_work.build_able()) == 0:
-                    wx.MessageBox("Not available!", "Error")
+                    wx.MessageBox(_("Not available!"), _("Error"))
                     return
                 # Start exporting target folder selection
-                title = 'Save-Azur Lane'
+                title = _("Save-Azur Lane")
                 address = os.getcwd()
                 dialog = wx.DirDialog(
                     self, title, address, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
@@ -558,13 +561,13 @@ class MainFrame(Mf):
             #Copy cannot be restored
             if index == data.et_copy_only:
                 if len(self.painting_work.build_unable()) == 0:
-                    wx.MessageBox("Not available!!", "Error")
+                    wx.MessageBox(_("Not available!"), _("Error"))
                     return
                 self.copy_file()
             #Export selections
             if index == data.et_select:
                 if self.name is None:
-                    wx.MessageBox("Not available!!", "Error")
+                    wx.MessageBox(_("Not available!"), _("Error"))
                     return
                 self.export_choice()
 
@@ -572,13 +575,13 @@ class MainFrame(Mf):
             if index == data.et_list_item:
                 if self.filter_type or self.search_type:
                     if self.view_work.__len__() == 0:
-                        wx.MessageBox("Not available!!", "Error")
+                        wx.MessageBox(_("Not available!"), _("Error"))
                         return
                 else:
                     if len(self.painting_work) == 0:
-                        wx.MessageBox("Not available!!", "Error")
+                        wx.MessageBox(_("Not available!"), _("Error"))
                         return
-                title = 'Save'"-Azur Lane"
+                title = _("Save-Azur Lane")
                 address = os.getcwd()
                 dialog = wx.DirDialog(
                     self, title, address, style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)

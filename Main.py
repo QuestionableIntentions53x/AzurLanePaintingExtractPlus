@@ -14,12 +14,12 @@ class LogHolder(object):
         self.is_last_n=True
 
     def write(self, message):
-        """if self.is_last_n:
+        if self.is_last_n:
             message=f"\n\t{time.asctime(self.t)}\n--------------\n{message}"
             self.is_last_n=False
         if message.endswith("\n"):
             message=f"{message}\n--------------\n"
-            self.is_last_n=True"""
+            self.is_last_n=True
         self.stream.write(message)
 
         with open(self.file_name,'a')as file:

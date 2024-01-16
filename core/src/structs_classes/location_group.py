@@ -3,6 +3,9 @@ import collections.abc
 
 import wx
 
+import gettext
+_ = gettext.gettext
+
 import core.src.structs_classes as dt
 from .basic_class import BasicInfo, BasicInfoList
 
@@ -29,10 +32,10 @@ class PerLocation(BasicInfo):
             return
 
         item_root = tree.AppendItem(target_root, str(self))
-        tree.AppendItem(item_root, f"Original Localization Name: \"{self.name}\"")
+        tree.AppendItem(item_root, _("Original Localization Name: \"{}\"").format(self.name))
         if self.state == dt.COVER:
-            tree.AppendItem(item_root, f"Original Localization Name: \"{self.old_data}\"")
-        tree.AppendItem(item_root, f"Localization Name: \"{self.val}\"")
+            tree.AppendItem(item_root, _("Original Localization Name: \"{}\"").format(self.old_data))
+        tree.AppendItem(item_root, _("Localization Name: \"{}\"").format(self.val))
 
 
 class LocationList(BasicInfoList):
@@ -69,9 +72,9 @@ class LocationList(BasicInfoList):
                     self.cover_count += 1
 
     def add_to_tree(self, tree: wx.TreeCtrl, root):
-        self.exist_root = tree.AppendItem(root, f"Existing Localization Resources ({self.exist_count})")
-        self.cover_root = tree.AppendItem(root, f"Override Existing Localization Resources ({self.cover_count})")
-        self.new_root = tree.AppendItem(root, f"New Localization Resources ({self.new_count})")
+        self.exist_root = tree.AppendItem(root, _("Existing Localization Resources ({})").format(self.exist_count))
+        self.cover_root = tree.AppendItem(root, _("Override Existing Localization Resources ({})").format(self.cover_count))
+        self.new_root = tree.AppendItem(root, _("New Localization Resources ({})").format(self.new_count))
 
         for value in self:
             value.add_to_tree(tree, self.exist_root, self.new_root, self.cover_root)

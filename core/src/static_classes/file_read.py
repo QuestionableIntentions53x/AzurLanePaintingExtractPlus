@@ -3,6 +3,9 @@ import os
 import os.path as op
 import re
 
+import gettext
+_ = gettext.gettext
+
 from core.src.static_classes.static_data import GlobalData
 from core.src.structs_classes.extract_structs import PerWorkList
 
@@ -71,15 +74,15 @@ class FileFilter(object):
                 num += len(list(map(info_write2, path)))
 
                 if path_len == 0:
-                    return False, 'Import completed, no new items!'
+                    return False, _('Import completed, no new items!')
             else:
-                return False, 'Import failed, no items to import!'
+                return False, _('Import failed, no items to import!')
         except Exception as info:
             #  raise
             print(info.__traceback__)
             return False, 'Import failed, an error occurred! %s' % info
         else:
-            return True, 'Import successful! Successfully imported %d items!' % num
+            return True, _('Import successful! Successfully imported {} items!').format(num)
 
     # Recursive file reading
     @staticmethod

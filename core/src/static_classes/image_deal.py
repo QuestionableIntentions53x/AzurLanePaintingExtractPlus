@@ -8,6 +8,9 @@ from re import match, split
 
 import wx
 
+import gettext
+_ = gettext.gettext
+
 from core.src.structs_classes.extract_structs import PerInfo
 
 
@@ -300,10 +303,10 @@ class ImageWork(object):
             return False, str(info)
         except ValueError as info:
             # Math error
-            return False, "math" + str(info)
+            return False, _("math") + str(info)
         else:
             # Successfull restoration
-            return True, "Successfully restored: %s" % now_info.cn_name
+            return True, _("Successfully restored: {}").format(now_info.cn_name)
 
     @staticmethod
     def restore_tool_one(mesh_path, pic_path, save_as):
@@ -351,7 +354,7 @@ class ImageWork(object):
             return False, "math" + str(info)
         else:
             # Successfull restoration
-            return True, "Successfully saved to: %s" % now_info.tex_path.removesuffix(".png") + "_texture.png"
+            return True, _("Successfully saved to: {}").format(now_info.tex_path.removesuffix(".png") + "_texture.png")
 
     @staticmethod
     def deconstruct_tool_no_save(now_info: PerInfo, pic_path: str):
@@ -373,10 +376,10 @@ class ImageWork(object):
             return False, str(info)
         except ValueError as info:
             # Math error
-            return False, "math" + str(info)
+            return False, _("math") + str(info)
         else:
             # Successfull restoration
-            return True, "Successfully saved to: %s" % now_info.save_path
+            return True, _("Successfully saved to: {}").format(now_info.save_path)
 
     """ IMAGE EDITING """
 
@@ -525,7 +528,7 @@ class ImageWork(object):
             box = [x_pos, y_pos, width + x_pos, height + y_pos]
             data = pic.crop(box)
         except Exception as err_info:
-            wx.MessageBox(f"Error occurred while processing\n【{file}】\n({err_info})", "Error", wx.ICON_ERROR)
+            wx.MessageBox(_("Error") + file + "\n" + err_info, _("Error"), wx.ICON_ERROR)
             return False, None
         else:
             return True, data

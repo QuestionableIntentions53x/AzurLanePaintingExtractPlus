@@ -11,6 +11,9 @@ import numpy
 import wx
 from PIL import Image, ImageChops
 
+import gettext
+_ = gettext.gettext
+
 from core.src.static_classes.image_deal import ImageWork
 from core.src.structs_classes.drop_order import FaceDragOrder
 from core.src.structs_classes.extract_structs import PerInfo
@@ -91,7 +94,7 @@ class FaceMatchFrame(MyDialogAddFace):
         alpha_g = target_bg.getchannel("A")
         a_f = ImageChops.lighter(alpha_f, alpha_g)
 
-        al = numpy.array(alpha, dtype=numpy.float)
+        al = numpy.array(alpha, dtype=numpy.float64)
 
         scale = al / 255
 
@@ -124,7 +127,6 @@ class FaceMatchFrame(MyDialogAddFace):
         if len(value) == 2:
             # Update background canvas size, redraw background image and face image
             self._bg_size = value
-            print(value)
             self.paste_target_face()
 
     # Face drawing coordinates processing
@@ -144,13 +146,13 @@ class FaceMatchFrame(MyDialogAddFace):
         if value < 0:
             self.left_extend += -value
             value=0
-            self.m_staticText_info.SetLabel(f"Canvas expands {self.left_extend} pixels to the left")
+            self.m_staticText_info.SetLabel(_("Canvas expands {} pixels to the left").format(self.left_extend))
 
         # If the x coordinate point of the face drawing + the width of the target face is greater than the total width of the current canvas, extend the canvas to the right, and the x value remains unchanged
         elif value + self.target_face.width - self.bg_size[0] > 0:
             self.right_extend += (value + self.target_face.width) - self.bg_size[0]
 
-            self.m_staticText_info.SetLabel(f"Canvas extends {self.right_extend} pixels to the right")
+            self.m_staticText_info.SetLabel(_("Canvas extends {} pixels to the right").format(self.right_extend))
         
         self._pos_x = value
         self.add_face()
@@ -163,12 +165,12 @@ class FaceMatchFrame(MyDialogAddFace):
         if value < 0:
             self.top_extend += -value
             value=0
-            self.m_staticText_info.SetLabel(f"Canvas extends upward by {self.top_extend} pixels")
+            self.m_staticText_info.SetLabel(_("Canvas extends upward by {} pixels").format(self.top_extend))
 
         # If the face drawing y coordinate + the height of the target face is greater than the total height of the current canvas, the canvas will extend downward and the y value will remain unchanged.
         elif value + self.target_face.height - self.bg_size[1] > 0:
             self.button_extend = value + self.target_face.height - self.bg_size[1]
-            self.m_staticText_info.SetLabel(f"Canvas extends downward by {self.button_extend} pixels")
+            self.m_staticText_info.SetLabel(_("Canvas extends downward by {} pixels").format(self.button_extend))
 
         self._pos_y = value
         self.add_face()
@@ -257,6 +259,11 @@ class FaceMatchFrame(MyDialogAddFace):
     def paste_target_face(self):
         self.bg_paint = Image.new("RGBA", self.bg_size, (0, 0, 0, 0))
         self.bg_paint.paste(self.target_img, (self.target_paint_x, self.target_paint_y))
+
+        if self.target_face.size == tuple([0,0]):
+            self.m_staticText_info.SetLabel(_("No face selected!"))
+            return
+
         if self.is_alpha_paste:
             FaceMatchFrame.paste_face(self.bg_paint, self.target_face, (self.pos_x, self.pos_y))
         else:
@@ -300,11 +307,11 @@ class FaceMatchFrame(MyDialogAddFace):
 
                     path = os.path.join(save_path, f"{name}-{key}-{count}.png")
 
-                    self.m_staticText_info.SetLabel(f"Connecting:{name}-{key}-{count}")
+                    self.m_staticText_info.SetLabel(_("Connecting:{}-{}-{}").format(name, key, count))
                     pic.save(path)
                 else:
                     continue
-        self.m_staticText_info.SetLabel(f"Joint completed")
+        self.m_staticText_info.SetLabel(_("Joint completed"))
 
     def initial(self, event):
         self.bg_paint.paste(self.target_img, (0, 0))
@@ -432,7 +439,7 @@ class FaceMatchFrame(MyDialogAddFace):
         pass
 
     def export(self, event):
-        dialog = wx.SingleChoiceDialog(self, "Select export type", "Select export type", ("Export only the current expression combination", "Export all expression combinations of the same size"))
+        dialog = wx.SingleChoiceDialog(self, "", _("Select export type"), (_("Export current selection"), _("Export all")))
         if dialog.ShowModal() == wx.ID_OK:
             select = dialog.GetSelection()
             # If exporting using minimum size
@@ -454,17 +461,17 @@ class FaceMatchFrame(MyDialogAddFace):
 
                 self.bg_size = (end_x - begin_x, end_y - begin_y)
 
-                self.m_staticText_info.SetLabel(f"The size is modified to: {self.bg_size}")
+                self.m_staticText_info.SetLabel(_("The size is modified to: {}").format(self.bg_size))
 
             if select == 0:
-                dialog = wx.FileDialog(self, f"Export {self.target.cn_name}-{self.select_index} expression combination", "./",
+                dialog = wx.FileDialog(self, _("Export {}-{} expression combination").format(self.target.cn_name, self.select_index), "./",
                                        f"{self.target.cn_name}-{self.select_index}.png", wildcard="*.png",
                                        style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
                 if dialog.ShowModal() == wx.ID_OK:
                     path = dialog.GetPath()
                     self.bg_paint.save(path)
             else:
-                dialog = wx.DirDialog(self, "Export folder", "./",
+                dialog = wx.DirDialog(self, _("Export folder"), "./",
                                       wx.DD_NEW_DIR_BUTTON | wx.DD_CHANGE_DIR | wx.DD_DEFAULT_STYLE)
                 if dialog.ShowModal() == wx.ID_OK:
                     self.save_path = dialog.GetPath()

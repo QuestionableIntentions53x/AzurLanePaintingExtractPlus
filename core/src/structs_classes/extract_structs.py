@@ -10,6 +10,8 @@ import wx
 from core.src.static_classes.static_data import GlobalData
 from core.src.structs_classes.basic_class import BasicInfo, BasicInfoList
 
+import gettext
+_ = gettext.gettext
 
 class PerInfo(BasicInfo):
     def __init__(self, name, val, has_cn):
@@ -154,39 +156,39 @@ class PerInfo(BasicInfo):
         action_root = tree.AppendItem(self.tree_ID, "Function Button")
         # Function keys
         independent = self.action_group[self.data.at_independent] = tree.AppendItem(action_root,
-                                                                                    "Make the current group independent")
+                                                                                    _("Duplicate"))
         tree.SetItemTextColour(independent, wx.Colour(255, 0, 166))
 
         face_match = self.action_group[self.data.at_face_match] = tree.AppendItem(action_root,
-                                                                                    "Add an additional expression to the current vertical painting")
+                                                                                    _("Import facial expression"))
         tree.SetItemTextColour(face_match, wx.Colour(0, 16, 166))
 
         atlas_spilt = self.action_group[self.data.at_atlas_split] = tree.AppendItem(action_root,
-                                                                                    "Cut the Q version of the villain")
+                                                                                    _("Atlas slicer"))
         tree.SetItemTextColour(atlas_spilt, wx.Colour(140, 0, 166))
 
         sprite_spilt = self.action_group[self.data.at_sprite_split] = tree.AppendItem(action_root,
-                                                                                      "Sprite cutting")
+                                                                                      _("Sprite slicer"))
         tree.SetItemTextColour(sprite_spilt, wx.Colour(248, 40, 255))
 
         set_able = self.action_group[self.data.at_set_able] = tree.AppendItem(action_root,
-                                                                              f"Force to a reversible state [current {self.must_able}]")
+                                                                              _("Force to a reversible state [{}]").format(self.must_able))
         tree.SetItemTextColour(set_able, wx.Colour(255, 177, 166))
 
         split_only = self.action_group[self.data.at_split_only] = tree.AppendItem(action_root,
-                                                                                  "Only vertical rendering reduction cutting")
+                                                                                  _("Export sprite sliced on texture boundry"))
         tree.SetItemTextColour(split_only, wx.Colour(248, 66, 255))
 
         remove_item = self.action_group[self.data.at_remove_item] = tree.AppendItem(action_root,
-                                                                                    "Remove the element ")
+                                                                                    _("Delete"))
         tree.SetItemTextColour(remove_item, wx.Colour(248, 0, 255))
 
-        change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root,
+        """change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root,
                                                                                       "Modify localization")
-        tree.SetItemTextColour(change_local, wx.Colour(248, 44, 255))
+        tree.SetItemTextColour(change_local, wx.Colour(248, 44, 255))"""
         
         import_sprite = self.action_group[self.data.at_import_sprite] = tree.AppendItem(action_root,
-                                                                                      "Convert PNG to tex")
+                                                                                      _("Convert PNG to tex"))
         tree.SetItemTextColour(import_sprite, wx.Colour(248, 44, 200))
 
     def append_to_tree(self, tree: wx.TreeCtrl, tree_root: wx.TreeItemId):
