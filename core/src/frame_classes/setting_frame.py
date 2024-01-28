@@ -12,7 +12,7 @@ from core.src.static_classes.static_data import GlobalData
 from core.src.structs_classes.setting_structs import SettingHolder, PerSetting
 from .help_frame import HelpPageFrame
 from .level_setting_frame import LevelSettingFrame
-from core.src.static_classes.update_localization import NameLocalization
+from core.src.frame_classes.localized_name_updater import NameUpdater
 
 
 class Setting(SettingWindow):
@@ -127,7 +127,7 @@ class Setting(SettingWindow):
         dialog.Show(True)
 
     def manual_name_update( self, event ):
-        dialog = NameLocalization(self.frame, self.setting, False)
+        dialog = NameUpdater(self.frame, self.setting, False)
         dialog.ShowModal()
         self.setting = dialog.settings
         self.names = dialog.names

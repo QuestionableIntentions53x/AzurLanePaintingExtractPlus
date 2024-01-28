@@ -7,13 +7,13 @@ import threading
 
 import wx
 
-from core.src.frame_classes.SpriteSpiltFrame import SpriteSplitFrame
+from core.src.frame_classes.sprite_spilt_frame import SpriteSplitFrame
 from core.src.frame_classes.atlas_spilt_frame import AtlasSpiltFrame
 from core.src.frame_classes.design_frame import MainFrame as Mf
 from core.src.frame_classes.face_match_frame import FaceMatchFrame
 from core.src.frame_classes.setting_frame import Setting
 from core.src.static_classes.file_read import FileFilter
-from core.src.static_classes.update_localization import NameLocalization
+from core.src.frame_classes.localized_name_updater import NameUpdater
 from core.src.static_classes.image_deal import ImageWork
 from core.src.static_classes.search_order import SearchOrder
 from core.src.static_classes.static_data import GlobalData
@@ -108,7 +108,7 @@ class MainFrame(Mf):
 
         # Update names
         if self.setting_info["automatic_name_update"] == True:
-            dialog = NameLocalization(self, self.setting_info)
+            dialog = NameUpdater(self, self.setting_info)
             do_update, _ = dialog.CheckVersion()
             if do_update:
                 dialog.ShowModal()

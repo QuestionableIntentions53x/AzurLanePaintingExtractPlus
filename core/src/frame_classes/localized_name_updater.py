@@ -4,102 +4,14 @@ import os
 import requests
 import wx
 
+from core.src.frame_classes.design_frame import NameUpdaterDialog
+
 import gettext
 _ = gettext.gettext
 
-class NameUpdaterFrame ( wx.Dialog ):
-    def __init__( self, parent ):
-        wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Ship Name Updater", pos = wx.DefaultPosition, size = wx.Size( 512,256 ), style = wx.DEFAULT_DIALOG_STYLE )
-        self.build(parent.tl)
-
-    def __del__( self ):
-        pass
-
-    def build(self, translation):
-        _ = translation.t
-
-        self.SetTitle(_("Ship Name Updater"))
-
-        self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-
-        # Main
-
-        bSizer_main = wx.BoxSizer( wx.VERTICAL )
-        
-        # = Side Menu
-
-        bSizer_container = wx.BoxSizer( wx.HORIZONTAL )
-        
-        # == Name Tree
-
-        bSizer_name_tree = wx.BoxSizer( wx.VERTICAL )
-
-        self.m_treeCtrl_info = wx.TreeCtrl( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE|wx.TR_HIDE_ROOT|wx.TR_TWIST_BUTTONS )
-        bSizer_name_tree.Add( self.m_treeCtrl_info, 1, wx.ALL|wx.EXPAND, 5 )
-
-        self.m_gauge_state = wx.Gauge( self, wx.ID_ANY, 100, wx.DefaultPosition, wx.DefaultSize, wx.GA_HORIZONTAL )
-        self.m_gauge_state.SetValue( 0 )
-        bSizer_name_tree.Add( self.m_gauge_state, 0, wx.ALL|wx.EXPAND, 5 )
-
-        bSizer_container.Add( bSizer_name_tree, 1, wx.EXPAND, 5 )
-
-        self.m_staticline22 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL|wx.LI_VERTICAL )
-        bSizer_container.Add( self.m_staticline22, 0, wx.EXPAND |wx.ALL, 5 )
-
-        # == Side Menu Buttons
-
-        bSizer_side_menu_buttons = wx.BoxSizer( wx.VERTICAL )
-
-        self.m_button_apply_all = wx.Button( self, wx.ID_ANY, _("Apply"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer_side_menu_buttons.Add( self.m_button_apply_all, 0, wx.ALL, 5 )
-
-        self.m_button_cancel = wx.Button( self, wx.ID_ANY, _("Cancel"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer_side_menu_buttons.Add( self.m_button_cancel, 0, wx.ALL, 5 )
-
-        self.m_button_disable_updates = wx.Button( self, wx.ID_ANY, _("Disable Updates"), wx.DefaultPosition, wx.DefaultSize, 0 )
-        bSizer_side_menu_buttons.Add( self.m_button_disable_updates, 0, wx.ALL, 5 )
-
-        bSizer_container.Add( bSizer_side_menu_buttons, 0, wx.EXPAND, 5 )
-
-        bSizer_main.Add( bSizer_container, 1, wx.EXPAND, 5 )
-
-        self.m_staticline24 = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-        bSizer_main.Add( self.m_staticline24, 0, wx.EXPAND |wx.ALL, 5 )
-
-        self.m_staticText_info = wx.StaticText( self, wx.ID_ANY, _("Loading..."), wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.m_staticText_info.Wrap( -1 )
-
-        bSizer_main.Add( self.m_staticText_info, 0, wx.ALL|wx.EXPAND, 5 )
-
-
-        self.SetSizer( bSizer_main )
-        self.Layout()
-
-        self.Centre( wx.BOTH )
-
-        # Connect Events
-        self.Bind( wx.EVT_UPDATE_UI, self.OnUpdateWindow )
-        self.m_button_apply_all.Bind( wx.EVT_BUTTON, self.apply_all )
-        self.m_button_cancel.Bind( wx.EVT_BUTTON, self.cancel )
-        self.m_button_disable_updates.Bind( wx.EVT_BUTTON, self.disable )
-
-    # Virtual event handlers, overide them in your derived class
-    def OnUpdateWindow( self, event ):
-        event.Skip()
-
-    def apply_all( self, event ):
-        event.Skip()
-
-    def disable( self, event ):
-        event.Skip()
-
-    def cancel( self, event ):
-        event.Skip()
-
-
-class NameLocalization ( NameUpdaterFrame ):
+class NameUpdater ( NameUpdaterDialog ):
     def __init__(self, parent, settings: map, check_version: bool = True):
-        super(NameLocalization, self).__init__(parent)
+        super(NameUpdater, self).__init__(parent)
         _ = parent.tl.t
         self.parent = parent
         self.settings = settings
