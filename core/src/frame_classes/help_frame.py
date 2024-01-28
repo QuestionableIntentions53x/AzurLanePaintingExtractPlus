@@ -7,8 +7,8 @@ from core.src.frame_classes.design_frame import MyFrameHelp
 
 
 class HelpPageFrame(MyFrameHelp):
-    def __init__(self, path):
-        super(HelpPageFrame, self).__init__(None)
+    def __init__(self, path, translator):
+        super(HelpPageFrame, self).__init__(None, translator)
 
         self.path = path
         sizer = wx.BoxSizer(wx.VERTICAL)

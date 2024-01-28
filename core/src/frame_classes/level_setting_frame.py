@@ -9,7 +9,7 @@ from core.src.static_classes.static_data import GlobalData
 
 class LevelSettingFrame(MyDialogHeightSetting):
     def __init__(self, parent, height_setting, names, work_path,miss_names,path):
-        super(LevelSettingFrame, self).__init__(parent)
+        super(LevelSettingFrame, self).__init__(parent, parent.frame.tl)
         self.setting = height_setting
         self.names = names
         self.frame = parent

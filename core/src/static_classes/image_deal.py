@@ -139,17 +139,17 @@ class ImageWork(object):
         return restore
 
     @staticmethod
-    def az_paint_restore(mesh_path: str, tex_path: str, must_able=False):
+    def az_paint_restore(mesh_path: str, tex_path: str, force_restorable=False):
         """
         A higher function version for extracting AzurLane paintings
-        :param must_able: is a must-able item, just return the image and do not perform any action
+        :param force_restorable: is a must-able item, just return the image and do not perform any action
         :param mesh_path: mesh_file address, str
         :param tex_path: texture file address
         :return: PIL.Image -> the final pic
         """
         # Get the components of the image
-        restore, pic = ImageWork.spilt_only(mesh_path, tex_path, must_able)
-        if must_able:
+        restore, pic = ImageWork.spilt_only(mesh_path, tex_path, force_restorable)
+        if force_restorable:
             return restore
         # Assemble by passing the draw function along with the image components and output image
         pic_out = reduce(ImageWork.draw, restore, pic)
@@ -157,19 +157,19 @@ class ImageWork(object):
         return pic_out
 
     @staticmethod
-    def spilt_only(mesh_path: str, tex_path: str, must_able=False):
+    def spilt_only(mesh_path: str, tex_path: str, force_restorable=False):
         """
         Split the raw mesh and texture and initalize the output image
         :param mesh_path: The absolute path to the mesh (.obj) file
         :param tex_path: The absolute path to the texture (.png) file
-        :param must_able: returns the texture as an image as is
+        :param force_restorable: returns the texture as an image as is
         :returns:   restore: A map of the split image segments paired with the position they need to be drawn to
                     pic: The propery sized output image
         """
         
         # img: Raw scrambled texture
         img = PIL.Image.open(tex_path)
-        if must_able:
+        if force_restorable:
             return img, None
         
         # size: input image size (stored as powers of 2 for memory allignment)
@@ -201,17 +201,17 @@ class ImageWork(object):
         return restore, pic
     
     @staticmethod
-    def az_paint_deconstruct(mesh_path: str, tex_path: str, img_path: str, must_able=False):
+    def az_paint_deconstruct(mesh_path: str, tex_path: str, img_path: str, force_restorable=False):
         """
         A function that scrambles a given string using the provided mesh and texture
-        :param must_able: If the image is unable to be converted, just return the image and do not perform any action
+        :param force_restorable: If the image is unable to be converted, just return the image and do not perform any action
         :param mesh_path: Absolute path to the mesh file
         :param tex_path: Absolute path to the texture file
         :return: pic_out [PIL.Image] final scrambled image 
         """
         # Get the components of the image
-        restore, pic = ImageWork.deconstruct_only(mesh_path, tex_path, img_path, must_able)
-        if must_able:
+        restore, pic = ImageWork.deconstruct_only(mesh_path, tex_path, img_path, force_restorable)
+        if force_restorable:
             return restore
         # Assemble by passing the draw function along with the image components and output image
         pic_out = reduce(ImageWork.draw, restore, pic)
@@ -219,12 +219,12 @@ class ImageWork(object):
         return pic_out
 
     @staticmethod
-    def deconstruct_only(mesh_path: str, tex_path: str, img_path: str, must_able=False):
+    def deconstruct_only(mesh_path: str, tex_path: str, img_path: str, force_restorable=False):
         """
         Revert the image to it's original state
         :param mesh_path: The absolute path to the mesh (.obj) file
         :param tex_path: The absolute path to the texture (.png) file
-        :param must_able: returns the texture as an image as is
+        :param force_restorable: returns the texture as an image as is
         :returns:   restore: A map of the split image segments paired with the position they need to be drawn to
                     pic: The propery sized output image
         """
@@ -232,7 +232,7 @@ class ImageWork(object):
         # img: Restored image
         img = PIL.Image.open(img_path)
         
-        if must_able:
+        if force_restorable:
             return img, None
         
         # img: Raw scrambled texture
@@ -294,16 +294,16 @@ class ImageWork(object):
         try:
             # Check the status of the asset
             #  If it is unable to perform a restoration will return the raw texture as an image
-            must_able = not now_info.get_is_able_work() and now_info.must_able
-            pic = ImageWork.az_paint_restore(now_info.mesh_path, now_info.tex_path, must_able)
+            force_restorable = not now_info.get_restorable() and now_info.force_restorable
+            pic = ImageWork.az_paint_restore(now_info.mesh_path, now_info.tex_path, force_restorable)
 
-            pic.save(now_info.save_path)
+            pic.save(now_info.sanitize_file_name(now_info.save_path))
         except RuntimeError as info:
             # System error
             return False, str(info)
         except ValueError as info:
             # Math error
-            return False, _("math") + str(info)
+            return False, str(info)
         else:
             # Successfull restoration
             return True, _("Successfully restored: {}").format(now_info.cn_name)
@@ -343,15 +343,15 @@ class ImageWork(object):
         try:
             # Check the status of the asset
             #  If it is unable to perform a restoration will return the raw texture as an image
-            must_able = not now_info.get_is_able_work() and now_info.must_able
-            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, must_able)
+            force_restorable = not now_info.get_restorable() and now_info.force_restorable
+            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, force_restorable)
             pic.save(now_info.tex_path.removesuffix(".png") + "_texture.png")
         except RuntimeError as info:
             # System error
             return False, str(info)
         except ValueError as info:
             # Math error
-            return False, "math" + str(info)
+            return False, str(info)
         else:
             # Successfull restoration
             return True, _("Successfully saved to: {}").format(now_info.tex_path.removesuffix(".png") + "_texture.png")
@@ -368,15 +368,15 @@ class ImageWork(object):
         try:
             # Check the status of the asset
             #  If it is unable to perform a restoration will return the raw texture as an image
-            must_able = not now_info.get_is_able_work() and now_info.must_able
-            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, must_able)
+            force_restorable = not now_info.get_restorable() and now_info.force_restorable
+            pic = ImageWork.az_paint_deconstruct(now_info.mesh_path, now_info.tex_path, pic_path, force_restorable)
             pic.save(now_info.save_path)
         except RuntimeError as info:
             # System error
             return False, str(info)
         except ValueError as info:
             # Math error
-            return False, _("math") + str(info)
+            return False, str(info)
         else:
             # Successfull restoration
             return True, _("Successfully saved to: {}").format(now_info.save_path)
@@ -423,8 +423,8 @@ class ImageWork(object):
         :param target: The target to split
         :param save_path: the path to output to
         """
-        pic_group, _ = ImageWork.spilt_only(target.mesh_path, target.tex_path, target.must_able)
-        if target.must_able:
+        pic_group, _ = ImageWork.spilt_only(target.mesh_path, target.tex_path, target.force_restorable)
+        if target.force_restorable:
             pic_group.save(os.path.join(save_path, f"{target.cn_name}.png"))
         count = 1
         for pic in pic_group:
@@ -561,7 +561,7 @@ class ImageWork(object):
             return True, data
 
     @staticmethod
-    def split_sprite(target, files, id_num, dump_file):
+    def split_sprite(target: PerInfo, files: list, id_num: str, dump_file: int):
         """
         Debug function to dump texture json or text data
         :param target: The asset to dump info about

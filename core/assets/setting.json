@@ -8,7 +8,10 @@
     "export_copy": false,
     "input_filter_mesh": "^.+-mesh(?: #\\d+)?\\.[Oo][Bb][Jj]$",
     "input_filter_tex": "^.+(?: #\\d+)?\\.[Pp][Nn][Gg]$",
+    "locale": 0,
+    "locale_name_version": "EN.7.1.415",
+    "automatic_name_update": true,
     "input_filter": 0,
     "output_group": 1,
-    "ignore_case": true
+    "ignore_case": false
 }

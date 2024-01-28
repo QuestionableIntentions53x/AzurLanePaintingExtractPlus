@@ -35,7 +35,7 @@ class QuickRestore(threading.Thread):
                 info_str = f"{self.info.cn_name}: Unable to preview"
             else:
                 size = self.size
-                if self.info.get_is_able_work():
+                if self.info.get_restorable():
                     pic, pic_size = ImageWork.restore_tool_no_save(self.info.mesh_path, self.info.tex_path, size)
                     info_str = f"Preview restorable illustration: {self.info.cn_name}; Size: {pic_size}"
                 elif self.info.lay_in != '':

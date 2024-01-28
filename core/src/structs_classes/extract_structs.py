@@ -14,7 +14,7 @@ import gettext
 _ = gettext.gettext
 
 class PerInfo(BasicInfo):
-    def __init__(self, name, val, has_cn):
+    def __init__(self, name, val, has_cn, tl):
         super(PerInfo, self).__init__(name, val)
         self.sub_data = 1
 
@@ -23,13 +23,13 @@ class PerInfo(BasicInfo):
         self.data = GlobalData()
         # tree storage structure group
         self._tex_path = "Empty"
-        self.more_tex = ["Empty"]
+        self.more_tex = []
         self._mesh_path = "Empty"
-        self.more_mesh = ["Empty"]
+        self.more_mesh = []
         # target file location
         self.lay_in = ""
         # whether restoration is possible
-        self._is_able_work = False
+        self._restorable = False
         # export target location
         self._save_path: str = ""
         # Chinese name
@@ -38,7 +38,7 @@ class PerInfo(BasicInfo):
         # parent component
         self.parent = None
 
-        self.must_able = False
+        self.force_restorable = False
 
         # tree ID
         self.key = ...
@@ -57,10 +57,14 @@ class PerInfo(BasicInfo):
             "remove_item",
             "sprite_spilt",
             "change_local",
-            "import_sprite"
+            "import_sprite",
+            "texture_path",
+            "mesh_path",
         ]
         # whether to save as Chinese
         self._is_save_as_cn = True
+
+        self.tl = tl
 
     def __contains__(self, item):
         if self.name in item or self.cn_name in item:
@@ -69,11 +73,11 @@ class PerInfo(BasicInfo):
             return False
 
     @property
-    def is_able_work(self):
-        if self.must_able:
+    def restorable(self):
+        if self.force_restorable:
             return True
         else:
-            return self._is_able_work
+            return self._restorable
 
     @property
     def tex_path(self):
@@ -82,7 +86,7 @@ class PerInfo(BasicInfo):
     @tex_path.setter
     def tex_path(self, value):
         self._tex_path = value
-        self._is_able_work = self.is_able()
+        self._restorable = self.check_restorable()
 
     @property
     def mesh_path(self):
@@ -91,7 +95,7 @@ class PerInfo(BasicInfo):
     @mesh_path.setter
     def mesh_path(self, value):
         self._mesh_path = value
-        self._is_able_work = self.is_able()
+        self._restorable = self.check_restorable()
 
     @property
     def save_path(self):
@@ -117,67 +121,78 @@ class PerInfo(BasicInfo):
     def is_def(val):
         return bool(val)
 
-    def get_is_able_work(self):
-        return self._is_able_work
+    def get_restorable(self):
+        return self._restorable
 
-    def is_able(self):
+    def check_restorable(self):
         if os.path.isfile(self.tex_path) and os.path.isfile(self.mesh_path):
             return True
         else:
             return False
 
     def transform_able(self):
-        self.must_able = not self.must_able
+        self.force_restorable = not self.force_restorable
+
+    def sanitize_file_name(self, path: str):
+        invalid = "#$%!&\'\"{}@<>+`*|?="
+        for char in invalid:
+            path = path.replace(char, "~")
+        return path
 
     def set_single_path(self, path):
         self._save_path = path
 
     def append_item_tree(self, tree: wx.TreeCtrl):
+        _ = self.tl.t
         # name
-        self.key = key = tree.AppendItem(self.tree_ID, f"Name: {self.cn_name}")
-        if self.is_able_work:
+        self.key = key = tree.AppendItem(self.tree_ID, _("Name: {}").format(self.cn_name))
+        if self.restorable:
             tree.SetItemTextColour(key, wx.Colour(253, 86, 255))
-        tree.AppendItem(self.tree_ID, f"Index name: {self.name}")
+        tree.AppendItem(self.tree_ID, _("Index name: {}").format(self.name))
         # texture
-        self.tex_id = tree.AppendItem(self.tree_ID, f"Texture file path: {self.tex_path}")
+        self.tex_id = self.action_group[self.data.at_tex_path] = tree.AppendItem(self.tree_ID, _("Texture file path: {}").format(self.tex_path))
 
-        more_tex_id = tree.AppendItem(self.tree_ID, f"Other Texture path({len(self.more_tex)})")
+        more_tex_id = tree.AppendItem(self.tree_ID, _("Other Texture path({})").format(len(self.more_tex)))
         for each_path in self.more_tex:
             val = tree.AppendItem(more_tex_id, each_path)
             self.more_tex_per_id.append(val)
         # mesh
-        self.mesh_id = tree.AppendItem(self.tree_ID, f"Mesh file path: {self.mesh_path}")
+        self.mesh_id = self.action_group[self.data.at_mesh_path] = tree.AppendItem(self.tree_ID, _("Mesh file path: {}").format(self.mesh_path))
 
-        more_mesh_id = tree.AppendItem(self.tree_ID, f"Other Mesh path({len(self.more_mesh)})")
+        more_mesh_id = tree.AppendItem(self.tree_ID, _("Other Mesh path({})").format(len(self.more_mesh)))
         for each_path in self.more_mesh:
             val = tree.AppendItem(more_mesh_id, each_path)
             self.more_mesh_per_id.append(val)
 
-        action_root = tree.AppendItem(self.tree_ID, "Function Button")
+        action_root = tree.AppendItem(self.tree_ID, _("Function Button"))
         # Function keys
-        independent = self.action_group[self.data.at_independent] = tree.AppendItem(action_root,
+        """independent = self.action_group[self.data.at_independent] = tree.AppendItem(action_root,
                                                                                     _("Duplicate"))
-        tree.SetItemTextColour(independent, wx.Colour(255, 0, 166))
+        tree.SetItemTextColour(independent, wx.Colour(255, 0, 166))"""
 
         face_match = self.action_group[self.data.at_face_match] = tree.AppendItem(action_root,
                                                                                     _("Import facial expression"))
         tree.SetItemTextColour(face_match, wx.Colour(0, 16, 166))
 
-        atlas_spilt = self.action_group[self.data.at_atlas_split] = tree.AppendItem(action_root,
-                                                                                    _("Atlas slicer"))
-        tree.SetItemTextColour(atlas_spilt, wx.Colour(140, 0, 166))
+        """atlas_spilt = self.action_group[self.data.at_atlas_split] = tree.AppendItem(action_root,
+                                                                                    _("Atlas Slicer"))
+        tree.SetItemTextColour(atlas_spilt, wx.Colour(140, 0, 166))"""
 
-        sprite_spilt = self.action_group[self.data.at_sprite_split] = tree.AppendItem(action_root,
-                                                                                      _("Sprite slicer"))
-        tree.SetItemTextColour(sprite_spilt, wx.Colour(248, 40, 255))
+        """sprite_spilt = self.action_group[self.data.at_sprite_split] = tree.AppendItem(action_root,
+                                                                                      _("Sprite Slicer"))
+        tree.SetItemTextColour(sprite_spilt, wx.Colour(248, 40, 255))"""
 
-        set_able = self.action_group[self.data.at_set_able] = tree.AppendItem(action_root,
-                                                                              _("Force to a reversible state [{}]").format(self.must_able))
-        tree.SetItemTextColour(set_able, wx.Colour(255, 177, 166))
+        """set_able = self.action_group[self.data.at_set_able] = tree.AppendItem(action_root,
+                                                                              _("Force to a reversible state [{}]").format(self.force_restorable))
+        tree.SetItemTextColour(set_able, wx.Colour(255, 177, 166))"""
 
         split_only = self.action_group[self.data.at_split_only] = tree.AppendItem(action_root,
                                                                                   _("Export sprite sliced on texture boundry"))
         tree.SetItemTextColour(split_only, wx.Colour(248, 66, 255))
+        
+        import_sprite = self.action_group[self.data.at_import_sprite] = tree.AppendItem(action_root,
+                                                                                      _("Import PNG and convert to texture"))
+        tree.SetItemTextColour(import_sprite, wx.Colour(248, 44, 200))
 
         remove_item = self.action_group[self.data.at_remove_item] = tree.AppendItem(action_root,
                                                                                     _("Delete"))
@@ -186,10 +201,6 @@ class PerInfo(BasicInfo):
         """change_local = self.action_group[self.data.at_change_local] = tree.AppendItem(action_root,
                                                                                       "Modify localization")
         tree.SetItemTextColour(change_local, wx.Colour(248, 44, 255))"""
-        
-        import_sprite = self.action_group[self.data.at_import_sprite] = tree.AppendItem(action_root,
-                                                                                      _("Convert PNG to tex"))
-        tree.SetItemTextColour(import_sprite, wx.Colour(248, 44, 200))
 
     def append_to_tree(self, tree: wx.TreeCtrl, tree_root: wx.TreeItemId):
         """
@@ -217,12 +228,14 @@ class PerInfo(BasicInfo):
 
     # Path setting related
     def set_tex(self, index):
+        _ = self.tl.t
         self.tex_path = self.more_tex[index]
-        return self.tex_id, f"Texture file path: {self.tex_path}"
+        return self.tex_id, _("Texture file path: {}").format(self.tex_path)
 
     def set_mesh(self, index):
+        _ = self.tl.t
         self.mesh_path = self.more_mesh[index]
-        return self.mesh_id, f"Mesh file path: {self.mesh_path}"
+        return self.mesh_id, _("Mesh file path: {}").format(self.mesh_path)
 
     def add_save(self, path):
         self.save_path = path
@@ -246,7 +259,7 @@ class PerInfo(BasicInfo):
         :param index:
         :return:
         """
-        val = PerInfo(self.name, self.val, self.has_cn)
+        val = PerInfo(self.name, self.val, self.has_cn, self.tl)
         if value_type == self.data.td_single:
             if file_type == self.data.td_texture_type:
                 val.tex_path = self.tex_path
@@ -262,7 +275,7 @@ class PerInfo(BasicInfo):
 
     def independent(self, name, tree, tree_root):
         # independent
-        target = PerInfo(name, f"{self.val}-# {self.sub_data}", self.has_cn)
+        target = PerInfo(name, f"{self.val}-# {self.sub_data}", self.has_cn, self.tl)
         target.tex_path = self.tex_path
         target.mesh_path = self.mesh_path
         target.append_to_tree(tree, tree_root)
@@ -271,9 +284,10 @@ class PerInfo(BasicInfo):
 
 
 class PerWorkList(BasicInfoList):
-    def __init__(self, item: collections.abc.Iterable = None, mesh_match=None, texture_match=None,
+    def __init__(self, parent, item: collections.abc.Iterable = None, mesh_match=None, texture_match=None,
                  is_ignore_case=False):
         super(PerWorkList, self).__init__(item)
+        self.parent = parent
         self.is_ignore_case = is_ignore_case
         self.texture_match = texture_match
         self.mesh_match = mesh_match
@@ -284,13 +298,15 @@ class PerWorkList(BasicInfoList):
         list(map(lambda x: self._info_dict[x].append_to_tree(tree, tree_root), self._key_list))
 
     def append(self, name, cn_name, has_cn):
-        value = PerInfo(name, cn_name, has_cn)
+        value = PerInfo(name, cn_name, has_cn, self.parent.tl)
 
         self[value.name] = value
         return value
 
     def remove(self, item: collections.abc.Iterable):
-        return PerWorkList(super(PerWorkList, self).remove(item))
+        for val in item:
+            del self._info_dict[val.name]
+            del self._key_list[self._key_list.index(val.name)]
 
     # Find part
     def find_by_id(self, id):
@@ -314,9 +330,9 @@ class PerWorkList(BasicInfoList):
         if target is None:
             return False, False, False, -1, None
         if id == target.tex_id:
-            return True, self.data.td_single, self.data.td_texture_type, 0, target
+            return False, self.data.td_single, self.data.td_texture_type, 0, target
         elif id == target.mesh_id:
-            return True, self.data.td_single, self.data.td_mesh_type, 0, target
+            return False, self.data.td_single, self.data.td_mesh_type, 0, target
         elif id in target.more_tex_per_id:
             return True, self.data.td_list_item, self.data.td_texture_type, target.more_tex_per_id.index(id), target
         elif id in target.more_mesh_per_id:
@@ -438,7 +454,7 @@ class PerWorkList(BasicInfoList):
                 target_cn = name
                 has_cn = False
 
-            value = PerInfo(name, target_cn, has_cn)
+            value = PerInfo(name, target_cn, has_cn, self.parent.tl)
             value.parent = self
 
             self[name] = value
@@ -456,13 +472,13 @@ class PerWorkList(BasicInfoList):
 
     # Generation section
     def build_able(self):
-        val = filter(lambda x: x.get_is_able_work(), self)
-        value = PerWorkList(val)
+        val = filter(lambda x: x.get_restorable(), self)
+        value = PerWorkList(self.parent, val)
         return value
 
     def build_unable(self):
-        val = filterfalse(lambda x: x.get_is_able_work(), self)
-        value = PerWorkList(val)
+        val = filterfalse(lambda x: x.get_restorable(), self)
+        value = PerWorkList(self.parent, val)
         return value
 
     def build_search(self):
@@ -479,11 +495,11 @@ class PerWorkList(BasicInfoList):
 
         val = filter(lambda x: x in filename, self)
 
-        return PerWorkList(val)
+        return PerWorkList(self.parent, val)
 
     def build_from_indexes(self, indexes):
         val = map(lambda x: self[x], indexes)
-        value = PerWorkList(val)
+        value = PerWorkList(self.parent, val)
         return value
 
     def build_from_pattern(self, pattern):
@@ -492,4 +508,4 @@ class PerWorkList(BasicInfoList):
         if len(val) == 2:
             return self.build_from_indexes(val[0])
         else:
-            return PerWorkList()
+            return PerWorkList(self.parent)

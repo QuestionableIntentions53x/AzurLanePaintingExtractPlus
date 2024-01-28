@@ -25,7 +25,18 @@ _ = gettext.gettext
 class MainFrame ( wx.Frame ):
 
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _("Azur Lane Painting Extract"), pos = wx.DefaultPosition, size = wx.Size( 1024,576 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = "Azur Lane Painting Extract", pos = wx.DefaultPosition, size = wx.Size( 1024,576 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+
+	def __del__( self ):
+		pass
+
+	
+	def build( self, translator ):
+		self.DestroyChildren()
+
+		_ = translator.t
+		
+		self.SetTitle(_("Azur Lane Painting Extract"))
 
 		self.SetSizeHints( wx.Size( 512,288 ), wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
@@ -45,6 +56,7 @@ class MainFrame ( wx.Frame ):
 		m_choice_filterChoices = _("All|Base|Skins|Retrofit|Promise|Young|MUSE μ|Other").split("|")
 		self.m_choice_filter = wx.Choice( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice_filterChoices, 0 )
 		self.m_choice_filter.SetSelection( 0 )
+		self.m_choice_filter
 		bSizer8.Add( self.m_choice_filter, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL|wx.EXPAND, 5 )
 
 		self.m_staticline5 = wx.StaticLine( self.m_panel1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_VERTICAL )
@@ -153,9 +165,19 @@ class MainFrame ( wx.Frame ):
 		self.m_bpButton_setting.Bind( wx.EVT_BUTTON, self.setting )
 		self.m_bpButton_refeash.Bind( wx.EVT_BUTTON, self.refeash )
 
-	def __del__( self ):
-		pass
+	def rebuild( self, translator ):
+		_ = translator.t
+		
+		self.SetTitle(_("Azur Lane Painting Extract"))
+		
+		m_choice_filterChoices = _("All|Base|Skins|Retrofit|Promise|Young|MUSE μ|Other").split("|")
+		for i in range(len(m_choice_filterChoices)):
+			self.m_choice_filter.SetString(i, m_choice_filterChoices[i])
 
+		self.m_button_work.SetLabelText(_("Export"))
+		
+		self.m_bpButton_change.SetLabelText(_("Set pairing file"))
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def exit( self, event ):
@@ -196,8 +218,18 @@ class MainFrame ( wx.Frame ):
 
 class MyFrameHelp ( wx.Frame ):
 
-	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = _("Help"), pos = wx.DefaultPosition, size = wx.Size( 1024,512 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+	def __init__( self, parent, translator ):
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = "Help", pos = wx.DefaultPosition, size = wx.Size( 1024,512 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		self.build(translator)
+
+	def __del__( self ):
+		pass
+
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Help"))
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		self.SetBackgroundColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_WINDOW ) )
@@ -280,10 +312,6 @@ class MyFrameHelp ( wx.Frame ):
 		self.m_bpButton10.Bind( wx.EVT_BUTTON, self.stop )
 		self.m_textCtrl8.Bind( wx.EVT_TEXT_ENTER, self.use_target_url )
 
-	def __del__( self ):
-		pass
-
-
 	# Virtual event handlers, overide them in your derived class
 	def undo_page( self, event ):
 		event.Skip()
@@ -313,9 +341,18 @@ class MyFrameHelp ( wx.Frame ):
 
 class MyDialogAtlasSpilt ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Atlas Slicer"), pos = wx.DefaultPosition, size = wx.Size( 512,256 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translator ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Atlas Slicer", pos = wx.DefaultPosition, size = wx.Size( 512,256 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translator)
 
+	def __del__( self ):
+		pass
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Atlas Slicer"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer30 = wx.BoxSizer( wx.VERTICAL )
@@ -395,8 +432,6 @@ class MyDialogAtlasSpilt ( wx.Dialog ):
 		self.m_sdbSizer2Cancel.Bind( wx.EVT_BUTTON, self.exit )
 		self.m_sdbSizer2Save.Bind( wx.EVT_BUTTON, self.save_all )
 
-	def __del__( self ):
-		pass
 
 
 	# Virtual event handlers, overide them in your derived class
@@ -420,11 +455,21 @@ class MyDialogAtlasSpilt ( wx.Dialog ):
 ## Class MyDialogSetting
 ###########################################################################
 
-class MyDialogSetting ( wx.Dialog ):
+class SettingWindow ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Settings"), pos = wx.DefaultPosition, size = wx.Size( 638,481 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translator ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Settings", pos = wx.DefaultPosition, size = wx.Size( 638,481 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translator)
 
+	def __del__( self ):
+		pass
+	
+	
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Settings"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer8 = wx.BoxSizer( wx.VERTICAL )
@@ -433,6 +478,26 @@ class MyDialogSetting ( wx.Dialog ):
 
 		self.m_panel10 = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer10 = wx.BoxSizer( wx.VERTICAL )
+
+		self.m_staticText99 = wx.StaticText( self.m_panel10, wx.ID_ANY, _("Language:"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText99.Wrap( -1 )
+		bSizer10.Add( self.m_staticText99, 0, wx.ALL, 5 )
+
+		m_choice_locale_options = "en-US (English)|zh-CN (中国人)".split("|")
+		self.m_choice_locale = wx.Choice( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice_locale_options, 0 )
+		self.m_choice_locale.SetSelection( 0 )
+		bSizer10.Add( self.m_choice_locale, 0, wx.ALL|wx.EXPAND, 5 )
+
+		bSizer11 = wx.BoxSizer( wx.HORIZONTAL )
+		self.m_checkBox_auto_name_update = wx.CheckBox( self.m_panel10, wx.ID_ANY, _("Automatically check for ship name updates on startup"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer11.Add( self.m_checkBox_auto_name_update, 0, wx.ALL, 5 )
+
+		self.m_button_manual_update = wx.Button( self.m_panel10, wx.ID_ANY, _("Update ship names"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer11.Add( self.m_button_manual_update, 0, wx.ALL, 5 )
+		bSizer10.Add( bSizer11 )
+
+		self.m_staticline99 = wx.StaticLine( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer10.Add( self.m_staticline99, 0, wx.EXPAND |wx.ALL, 5 )
 
 		self.m_checkBox_ex_cn = wx.CheckBox( self.m_panel10, wx.ID_ANY, _("Use localized ship names on export"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer10.Add( self.m_checkBox_ex_cn, 0, wx.ALL, 5 )
@@ -462,12 +527,11 @@ class MyDialogSetting ( wx.Dialog ):
 		self.m_checkBox_ignore_case = wx.CheckBox( self.m_panel10, wx.ID_ANY, _("Case insensitive localization"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer10.Add( self.m_checkBox_ignore_case, 0, wx.ALL, 5 )
 
-		self.m_staticline10 = wx.StaticLine( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		"""self.m_staticline10 = wx.StaticLine( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer10.Add( self.m_staticline10, 0, wx.EXPAND |wx.ALL, 5 )
 
 		self.m_staticText13 = wx.StaticText( self.m_panel10, wx.ID_ANY, _("Filter imports"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText13.Wrap( -1 )
-
 		bSizer10.Add( self.m_staticText13, 0, wx.ALL, 5 )
 
 		m_choice_inport_filterChoices = _("All|Base|Skins|Retrofit|Promise|Young|MUSE μ|Other").split("|")
@@ -480,13 +544,12 @@ class MyDialogSetting ( wx.Dialog ):
 
 		self.m_staticText14 = wx.StaticText( self.m_panel10, wx.ID_ANY, _("Export file organization"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText14.Wrap( -1 )
-
 		bSizer10.Add( self.m_staticText14, 0, wx.ALL, 5 )
 
 		m_choice_export_divisionChoices = _("None|By name|By type").split("|")
 		self.m_choice_export_division = wx.Choice( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice_export_divisionChoices, 0 )
 		self.m_choice_export_division.SetSelection( 0 )
-		bSizer10.Add( self.m_choice_export_division, 0, wx.ALL|wx.EXPAND, 5 )
+		bSizer10.Add( self.m_choice_export_division, 0, wx.ALL|wx.EXPAND, 5 )"""
 
 		self.m_staticline27 = wx.StaticLine( self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer10.Add( self.m_staticline27, 0, wx.EXPAND |wx.ALL, 5 )
@@ -506,16 +569,16 @@ class MyDialogSetting ( wx.Dialog ):
 
 		bSizer46 = wx.BoxSizer( wx.VERTICAL )
 
-		bSizer48 = wx.BoxSizer( wx.HORIZONTAL )
+		"""bSizer48 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.m_button_guider = wx.Button( self.m_panel9, wx.ID_ANY, _("Help"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer48.Add( self.m_button_guider, 0, wx.ALL, 5 )
 
-		self.m_button_lever_up_setting = wx.Button( self.m_panel9, wx.ID_ANY, _("Advanced"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_button_lever_up_setting = wx.Button( self.m_panel9, wx.ID_ANY, _("Advanced..."), wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer48.Add( self.m_button_lever_up_setting, 0, wx.ALL|wx.ALIGN_RIGHT, 5 )
 
 
-		bSizer46.Add( bSizer48, 0, wx.ALIGN_RIGHT, 5 )
+		bSizer46.Add( bSizer48, 0, wx.ALIGN_RIGHT, 5 )"""
 
 		self.m_staticline43 = wx.StaticLine( self.m_panel9, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
 		bSizer46.Add( self.m_staticline43, 0, wx.EXPAND |wx.ALL, 5 )
@@ -554,27 +617,68 @@ class MyDialogSetting ( wx.Dialog ):
 
 		# Connect Events
 		self.Bind( wx.EVT_INIT_DIALOG, self.set_info )
-		self.m_choice_inport_filter.Bind( wx.EVT_CHOICE, self.import_filter )
-		self.m_choice_export_division.Bind( wx.EVT_CHOICE, self.output_group )
-		self.m_button_guider.Bind( wx.EVT_BUTTON, self.guider )
-		self.m_button_lever_up_setting.Bind( wx.EVT_BUTTON, self.height_setting_dialog )
+		self.m_choice_locale.Bind( wx.EVT_CHOICE, self.locale )
+		self.m_button_manual_update.Bind( wx.EVT_BUTTON, self.manual_name_update )
+		#self.m_choice_inport_filter.Bind( wx.EVT_CHOICE, self.import_filter )
+		#self.m_choice_export_division.Bind( wx.EVT_CHOICE, self.output_group )
+		#self.m_button_guider.Bind( wx.EVT_BUTTON, self.guider )
+		#self.m_button_lever_up_setting.Bind( wx.EVT_BUTTON, self.height_setting_dialog )
 		self.m_sdbSizer1Apply.Bind( wx.EVT_BUTTON, self.apply_press )
 		self.m_sdbSizer1Cancel.Bind( wx.EVT_BUTTON, self.cancel_press )
 		self.m_sdbSizer1OK.Bind( wx.EVT_BUTTON, self.ok_press )
 
-	def __del__( self ):
-		pass
+	
+	def rebuild(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Settings"))
 
+		self.m_staticText99.SetLabelText(_("Language:"))
+		
+		m_choice_locale_options = "en-US (English)|zh-CN (中国人)".split("|")
+		for i in range(len(m_choice_locale_options)):
+			self.m_choice_locale.SetString(i, m_choice_locale_options[i])
+		
+		self.m_checkBox_auto_name_update.SetLabelText(_("Automatically check for ship name updates on startup"))
+
+		self.m_button_manual_update.SetLabelText(_("Update ship names"))
+
+		self.m_checkBox_ex_cn.SetLabelText(_("Use localized ship names on export"))
+		
+		self.m_checkBox_new_dir.SetLabelText(_("Create new folder on export in export directory"))
+
+		self.m_checkBox_open_dir.SetLabelText(_("Open export folder upon completion"))
+		
+		self.m_checkBox_skip_exist.SetLabelText(_("Do not overwrite files on export"))
+		
+		self.m_checkBox_clear_list.SetLabelText(_("Clear the original list when importing"))
+		
+		self.m_checkBox_finish_exit.SetLabelText(_("Exit after export"))
+		
+		self.m_checkBox_ex_copy.SetLabelText(_("When exporting all, copy at the same time and cannot be restored."))
+		
+		self.m_checkBox_ignore_case.SetLabelText(_("Case insensitive localization"))
+		
+		# self.m_button_guider.SetLabelText(_("Help"))
+		
+		# self.m_button_lever_up_setting.SetLabelText(_("Advanced..."))
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def set_info( self, event ):
 		event.Skip()
 
-	def import_filter( self, event ):
+	def locale( self, event ):
 		event.Skip()
 
-	def output_group( self, event ):
+	def manual_name_update( self, event ):
 		event.Skip()
+
+	#def import_filter( self, event ):
+	#	event.Skip()
+
+	#def output_group( self, event ):
+	#	event.Skip()
 
 	def guider( self, event ):
 		event.Skip()
@@ -598,9 +702,18 @@ class MyDialogSetting ( wx.Dialog ):
 
 class MyDialogKetValueSetting ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Edit Localization Values"), pos = wx.DefaultPosition, size = wx.Size( 256,512 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translation ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Edit Localization Values", pos = wx.DefaultPosition, size = wx.Size( 256,512 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translation)
 
+	def __del__( self ):
+		pass
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Edit Localization Values"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer13 = wx.BoxSizer( wx.VERTICAL )
@@ -679,9 +792,7 @@ class MyDialogKetValueSetting ( wx.Dialog ):
 		self.m_button_clear.Bind( wx.EVT_BUTTON, self.clear_item )
 		self.m_button_add.Bind( wx.EVT_BUTTON, self.add_item )
 
-	def __del__( self ):
-		pass
-
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def close_save( self, event ):
@@ -715,16 +826,26 @@ class MyDialogKetValueSetting ( wx.Dialog ):
 
 class MyDialogHeightSetting ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Advanced"), pos = wx.DefaultPosition, size = wx.Size( 256,512 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translation ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Advanced Settings", pos = wx.DefaultPosition, size = wx.Size( 256,512 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translation)
 
+	def __del__( self ):
+		pass
+
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Advanced Settings"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer45 = wx.BoxSizer( wx.VERTICAL )
 
 		sbSizer1 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, _("Mesh file pairing priority") ), wx.VERTICAL )
 
-		self.m_staticText26 = wx.StaticText( sbSizer1.GetStaticBox(), wx.ID_ANY, _("first priority"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText26 = wx.StaticText( sbSizer1.GetStaticBox(), wx.ID_ANY, _("First priority"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText26.Wrap( -1 )
 
 		sbSizer1.Add( self.m_staticText26, 0, wx.ALL, 5 )
@@ -732,7 +853,7 @@ class MyDialogHeightSetting ( wx.Dialog ):
 		self.m_textCtrl_mesh_first = wx.TextCtrl( sbSizer1.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
 		sbSizer1.Add( self.m_textCtrl_mesh_first, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText27 = wx.StaticText( sbSizer1.GetStaticBox(), wx.ID_ANY, _("second priority"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText27 = wx.StaticText( sbSizer1.GetStaticBox(), wx.ID_ANY, _("Second priority"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText27.Wrap( -1 )
 
 		sbSizer1.Add( self.m_staticText27, 0, wx.ALL, 5 )
@@ -814,9 +935,7 @@ class MyDialogHeightSetting ( wx.Dialog ):
 		self.m_sdbSizer4Cancel.Bind( wx.EVT_BUTTON, self.cancel_click )
 		self.m_sdbSizer4OK.Bind( wx.EVT_BUTTON, self.ok_click )
 
-	def __del__( self ):
-		pass
-
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def prepare_data( self, event ):
@@ -841,9 +960,18 @@ class MyDialogHeightSetting ( wx.Dialog ):
 
 class MyDialogAddFace ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Expression Editor"), pos = wx.DefaultPosition, size = wx.Size( 680,470 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translation ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Expression Editor", pos = wx.DefaultPosition, size = wx.Size( 680,470 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.buld(translation)
 
+	def __del__( self ):
+		pass
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Expression Editor"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer17 = wx.BoxSizer( wx.VERTICAL )
@@ -876,7 +1004,7 @@ class MyDialogAddFace ( wx.Dialog ):
 		self.m_panel7 = wx.Panel( self.m_notebook_info, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer22 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_staticText4 = wx.StaticText( self.m_panel7, wx.ID_ANY, _("x offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText4 = wx.StaticText( self.m_panel7, wx.ID_ANY, _("X-Offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText4.Wrap( -1 )
 
 		bSizer22.Add( self.m_staticText4, 0, wx.ALL, 5 )
@@ -884,7 +1012,7 @@ class MyDialogAddFace ( wx.Dialog ):
 		self.m_textCtrl_x_value = wx.TextCtrl( self.m_panel7, wx.ID_ANY, "0", wx.DefaultPosition, wx.DefaultSize, wx.TE_PROCESS_ENTER )
 		bSizer22.Add( self.m_textCtrl_x_value, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText5 = wx.StaticText( self.m_panel7, wx.ID_ANY, _("y offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText5 = wx.StaticText( self.m_panel7, wx.ID_ANY, _("Y-Offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText5.Wrap( -1 )
 
 		bSizer22.Add( self.m_staticText5, 0, wx.ALL, 5 )
@@ -900,7 +1028,7 @@ class MyDialogAddFace ( wx.Dialog ):
 		self.m_panel14 = wx.Panel( self.m_notebook_info, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer30 = wx.BoxSizer( wx.VERTICAL )
 
-		self.m_staticText8 = wx.StaticText( self.m_panel14, wx.ID_ANY, _("x offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText8 = wx.StaticText( self.m_panel14, wx.ID_ANY, _("X-Offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText8.Wrap( -1 )
 
 		bSizer30.Add( self.m_staticText8, 0, wx.ALL, 5 )
@@ -908,7 +1036,7 @@ class MyDialogAddFace ( wx.Dialog ):
 		self.m_textCtrl_pic_x = wx.TextCtrl( self.m_panel14, wx.ID_ANY, "0", wx.DefaultPosition, wx.DefaultSize, wx.TE_PROCESS_ENTER )
 		bSizer30.Add( self.m_textCtrl_pic_x, 0, wx.ALL|wx.EXPAND, 5 )
 
-		self.m_staticText9 = wx.StaticText( self.m_panel14, wx.ID_ANY, _("y offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText9 = wx.StaticText( self.m_panel14, wx.ID_ANY, _("Y-Offset"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText9.Wrap( -1 )
 
 		bSizer30.Add( self.m_staticText9, 0, wx.ALL, 5 )
@@ -1023,9 +1151,7 @@ class MyDialogAddFace ( wx.Dialog ):
 		self.m_choice_step.Bind( wx.EVT_CHOICE, self.set_step )
 		self.m_button_export.Bind( wx.EVT_BUTTON, self.export )
 
-	def __del__( self ):
-		pass
-
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def initial( self, event ):
@@ -1089,9 +1215,18 @@ class MyDialogAddFace ( wx.Dialog ):
 
 class MyDialogUpdateLocation ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Update localization files"), pos = wx.DefaultPosition, size = wx.Size( 628,256 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translation ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Update localization files", pos = wx.DefaultPosition, size = wx.Size( 628,256 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translation)
 
+	def __del__( self ):
+		pass
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Update localization files"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer25 = wx.BoxSizer( wx.VERTICAL )
@@ -1102,7 +1237,7 @@ class MyDialogUpdateLocation ( wx.Dialog ):
 
 		bSizer35 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, _("Import file filtering"), wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText11 = wx.StaticText( self, wx.ID_ANY, _("Localization"), wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.m_staticText11.Wrap( -1 )
 
 		bSizer35.Add( self.m_staticText11, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
@@ -1120,7 +1255,7 @@ class MyDialogUpdateLocation ( wx.Dialog ):
 
 		bSizer26.Add( bSizer35, 0, wx.EXPAND, 5 )
 
-		m_listBox_selectChoices = [ _("AzurLaneTools") ]
+		m_listBox_selectChoices = [ "AzurLaneTools" ]
 		self.m_listBox_select = wx.ListBox( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_listBox_selectChoices, wx.LB_NEEDED_SB )
 		bSizer26.Add( self.m_listBox_select, 1, wx.ALL|wx.EXPAND, 5 )
 
@@ -1192,9 +1327,7 @@ class MyDialogUpdateLocation ( wx.Dialog ):
 		self.m_button_apply_cover.Bind( wx.EVT_BUTTON, self.apply_cover )
 		self.m_button_cancel.Bind( wx.EVT_BUTTON, self.cancel )
 
-	def __del__( self ):
-		pass
-
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def MyDialogUpdateLocationOnInitDialog( self, event ):
@@ -1231,9 +1364,19 @@ class MyDialogUpdateLocation ( wx.Dialog ):
 
 class DialogSpiltSprite ( wx.Dialog ):
 
-	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = _("Sprite Cutting"), pos = wx.DefaultPosition, size = wx.Size( 512,350 ), style = wx.DEFAULT_DIALOG_STYLE )
+	def __init__( self, parent, translation ):
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = "Sprite Cutting", pos = wx.DefaultPosition, size = wx.Size( 512,350 ), style = wx.DEFAULT_DIALOG_STYLE )
+		self.build(translation)
 
+	def __del__( self ):
+		pass
+
+
+	def build(self, translation):
+		_ = translation.t
+		
+		self.SetTitle(_("Sprite Cutting"))
+		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer36 = wx.BoxSizer( wx.VERTICAL )
@@ -1243,7 +1386,7 @@ class DialogSpiltSprite ( wx.Dialog ):
 		bSizer38 = wx.BoxSizer( wx.VERTICAL )
 
 		bSizer38.SetMinSize( wx.Size( 200,-1 ) )
-		self.m_staticText_name = wx.StaticText( self, wx.ID_ANY, _("MyLabel"), wx.DefaultPosition, wx.DefaultSize, wx.ST_ELLIPSIZE_END )
+		self.m_staticText_name = wx.StaticText( self, wx.ID_ANY, "", wx.DefaultPosition, wx.DefaultSize, wx.ST_ELLIPSIZE_END )
 		self.m_staticText_name.Wrap( -1 )
 
 		bSizer38.Add( self.m_staticText_name, 0, wx.ALL|wx.EXPAND, 5 )
@@ -1274,7 +1417,7 @@ class DialogSpiltSprite ( wx.Dialog ):
 
 		bSizer42.Add( self.m_staticText20, 1, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		m_choice_dump_typeChoices = _("Text(*.txt)|Json(*.json)").split("|")
+		m_choice_dump_typeChoices = "Text(*.txt)|Json(*.json)".split("|")
 		self.m_choice_dump_type = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, m_choice_dump_typeChoices, 0 )
 		self.m_choice_dump_type.SetSelection( 0 )
 		bSizer42.Add( self.m_choice_dump_type, 0, wx.ALL, 5 )
@@ -1340,9 +1483,7 @@ class DialogSpiltSprite ( wx.Dialog ):
 		self.m_listBox_in_files.Bind( wx.EVT_LISTBOX_DCLICK, self.view_pic )
 		self.m_sdbSizer3Save.Bind( wx.EVT_BUTTON, self.save_all )
 
-	def __del__( self ):
-		pass
-
+		
 
 	# Virtual event handlers, overide them in your derived class
 	def on_key_down( self, event ):

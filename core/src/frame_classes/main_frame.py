@@ -7,15 +7,13 @@ import threading
 
 import wx
 
-import gettext
-_ = gettext.gettext
-
 from core.src.frame_classes.SpriteSpiltFrame import SpriteSplitFrame
 from core.src.frame_classes.atlas_spilt_frame import AtlasSpiltFrame
 from core.src.frame_classes.design_frame import MainFrame as Mf
 from core.src.frame_classes.face_match_frame import FaceMatchFrame
 from core.src.frame_classes.setting_frame import Setting
 from core.src.static_classes.file_read import FileFilter
+from core.src.static_classes.update_localization import NameLocalization
 from core.src.static_classes.image_deal import ImageWork
 from core.src.static_classes.search_order import SearchOrder
 from core.src.static_classes.static_data import GlobalData
@@ -25,6 +23,10 @@ from core.src.structs_classes.extract_structs import PerInfo
 from core.src.thread_classes.extract_thread import WorkThread, WatchDogThread, SideWorkThread
 from core.src.thread_classes.quick_view import QuickRestore
 
+from core.src.static_classes.locale import Translator
+
+import gettext
+_ = gettext.gettext
 
 class MainFrame(Mf):
     """
@@ -48,19 +50,28 @@ class MainFrame(Mf):
 
         # Settings file
         with open(os.path.join(path, "core\\assets\\setting.json"), 'r')as file:
-            self.setting_info = json.load(file)
+            self.setting_info: dict = json.load(file)
         with open(os.path.join(path, "core\\assets\\height_setting.json"), 'r')as file:
-            self.height_setting = json.load(file)
+            self.height_setting: dict = json.load(file)
 
-        self.root = self.m_treeCtrl_info.AddRoot(u"azur lane")
+        # Localization
+        self.tl = Translator()
+        self.tl.set_locale_from_index(self.setting_info[self.data.sk_locale])
+        _ = self.tl.t
+
+        # Initalize main UI
+        self.build(self.tl)
+
+        # Set root folder
+        self.root = self.m_treeCtrl_info.AddRoot(_("Azur Lane"))
 
         # Final processing work list
-        self.painting_work = PerWorkList(mesh_match=self.height_setting[self.data.sk_mash_match],
+        self.painting_work = PerWorkList(self, mesh_match=self.height_setting[self.data.sk_mash_match],
                                          texture_match=self.height_setting[self.data.sk_texture_match],
                                          is_ignore_case=self.setting_info[self.data.sk_ignore_case])
         
         # UI processing work list
-        self.view_work = PerWorkList()
+        self.view_work = PerWorkList(self)
 
         # Find the information of the tree index, pos->[single true, false in the list]; type_is->type [texture, mesh], name->object at the clicked position
         self.is_single, self.type_is, self.name = None, None, None
@@ -94,6 +105,15 @@ class MainFrame(Mf):
 
         # window (only one)
         self.__dialog = None
+
+        # Update names
+        if self.setting_info["automatic_name_update"] == True:
+            dialog = NameLocalization(self, self.setting_info)
+            do_update, _ = dialog.CheckVersion()
+            if do_update:
+                dialog.ShowModal()
+            else:
+                dialog.cancel(None)
 
         # search, filter
         self.search_type = False
@@ -135,6 +155,7 @@ class MainFrame(Mf):
         :param target: points to the target method type: PerInfo
         :return: bool
         """
+        _ = self.tl.t
         if is_single is None:
             return False
         # When the selected object is a single object, not an item in the list (the tags of other files)
@@ -142,28 +163,34 @@ class MainFrame(Mf):
         if type_is:
             if is_single:
                 dialog = wx.SingleChoiceDialog(
-                    self, "Select to change Texture file", "Select to change file", target.get_select(type_is))
+                    self, _("Select Texture File"), _("Select file"), target.get_select(type_is))
                 if dialog.ShowModal() == wx.ID_OK:
                     index = dialog.GetSelection()
                 # Redirect texture files
-            id, data = target.set_tex(index)
-            self.m_treeCtrl_info.SetItemText(id, data)
+            try:
+                id, data = target.set_tex(index)
+                self.m_treeCtrl_info.SetItemText(id, data)
+            except:
+                return False
+
         #The selected one is mesh
         else:
             if is_single:
                 dialog = wx.SingleChoiceDialog(
-                    self, "Select to change the Mesh file", "Select to change the file", target.get_select(type_is))
+                    self, _("Select Mesh File"), _("Select file"), target.get_select(type_is))
                 if dialog.ShowModal() == wx.ID_OK:
                     index = dialog.GetSelection()
                 # Redirect mesh files
-            id, data = target.set_mesh(index)
-            self.m_treeCtrl_info.SetItemText(id, data)
+            try:
+                id, data = target.set_mesh(index)
+                self.m_treeCtrl_info.SetItemText(id, data)
+            except:
+                return False
 
-        if target.is_able():
+        if target.check_restorable():
             self.m_treeCtrl_info.SetItemTextColour(
                 target.key, wx.Colour(253, 86, 255))
         else:
-
             self.m_treeCtrl_info.SetItemTextColour(
                 target.key, wx.Colour(255, 255, 255))
         return True
@@ -176,6 +203,7 @@ class MainFrame(Mf):
         :param target: the target to be created
         :return: None
         """
+        _ = self.tl.t
 
         self.__dialog = wx.TextEntryDialog(parent=None, message='', caption=_("Name of duplicated ship instance"),
                                            value=f"{target.name}-#{target.sub_data}", )
@@ -191,12 +219,13 @@ class MainFrame(Mf):
                 target.independent(name, self.m_treeCtrl_info, self.root)
 
     def face_match_target(self, target: PerInfo):
-        if not target.is_able_work:
+        _ = self.tl.t
+        if not target.restorable:
             self.m_staticText_info.SetLabel(_("Face change failed! Must be a restoreable object"))
             return
         self.m_staticText_info.SetLabel(_("Started changing face"))
         data = wx.SingleChoiceDialog(self, "", _("Select Accessory Type:"), [
-                                     _("Facial expression (680x470"), _("Ship decoration (1920x1080)")]) #TODO: add custom?
+                                     _("Facial expression (680x470)"), _("Ship decoration (1920x1080)")]) #TODO: add custom?
         if wx.ID_OK == data.ShowModal():
             info = data.GetSelection()
             type_is = False
@@ -206,6 +235,7 @@ class MainFrame(Mf):
             self.__dialog.ShowModal()
 
     def atlas_split_target(self, target: PerInfo):
+        _ = self.tl.t
         if not os.path.isfile(target.tex_path):
             self.m_staticText_info.SetLabel(_("Cutting failed, there must be an available Texture2D file"))
             return
@@ -215,23 +245,27 @@ class MainFrame(Mf):
             self.__dialog.ShowModal()
 
     def set_able_target(self, target: PerInfo):
+        _ = self.tl.t
         target.transform_able()
         self.m_treeCtrl_info.DeleteChildren(target.tree_ID)
         target.append_item_tree(self.m_treeCtrl_info)
         self.m_staticText_info.SetLabel(
-            _("{} has been converted and is now {}").format(target.cn_name, target.must_able)) #TODO: Figure out what must-able means
+            _("{} has been converted and is now {}").format(target.cn_name, target.force_restorable)) #TODO: Figure out what must-able means
 
     def remove_target(self, target: PerInfo):
+        _ = self.tl.t
         info = wx.MessageBox(
             _("Are you sure you want to remove\n{}").format(target), _("Information"), wx.YES_NO | wx.ICON_INFORMATION)
         if info == wx.YES:
             self.m_treeCtrl_info.Delete(target.tree_ID)
             self.painting_work.remove([target])
+            self.view_work.remove([target])
             if self.search_type or self.filter_type:
                 self.select_data.remove([target])
 
     def split_target_only(self, target: PerInfo):
-        if not target.is_able_work:
+        _ = self.tl.t
+        if not target.restorable:
             self.m_staticText_info.SetLabel(_("{} cannot be cut and is a non-reducible object").format(target))
             return
         self.__dialog = wx.DirDialog(
@@ -246,6 +280,7 @@ class MainFrame(Mf):
                     _("{} cutting completed, saved to path: {}").format(target.cn_name, path))
 
     def sprite_split(self, target: PerInfo):
+        _ = self.tl.t
         if not os.path.isfile(target.tex_path):
             self.m_staticText_info.SetLabel(_("{} cannot be cut, at least one Texture2D is required").format(target))
             return
@@ -270,6 +305,7 @@ class MainFrame(Mf):
                 self.refeash(None)"""
 
     def import_png(self, target: PerInfo):
+        _ = self.tl.t
         
         dialog = wx.FileDialog(parent=self, message=_("PNG Path"), defaultDir=target.tex_path[:target.tex_path.rfind('\\')],
                                 wildcard="*.png",style=wx.DD_DEFAULT_STYLE)
@@ -312,8 +348,9 @@ class MainFrame(Mf):
         Export selections
         :return: none
         """
+        _ = self.tl.t
         target = self.name
-        self.__dialog = wx.FileDialog(self, _("Save-Azur Lane"), os.getcwd(), f'{target.cn_name}.png', "*.png",
+        self.__dialog = wx.FileDialog(self, _("Save-Azur Lane"), os.getcwd(), f'{target.sanitize_file_name(target.cn_name)}.png', "*.png",
                                       wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT | wx.FD_PREVIEW)
 
         if self.__dialog.ShowModal() == wx.ID_OK:
@@ -356,7 +393,7 @@ class MainFrame(Mf):
             target_path_list = FileFilter.all_file(path)
 
             skip = able.build_skip(target_path_list)
-            able = able.remove(skip)
+            able.remove(skip)
 
         # Start thread
         # self.thread_main.add_save_path(self.save_path)
@@ -382,6 +419,7 @@ class MainFrame(Mf):
         Export the non-restorable part (copy)
         :return: none
         """
+        _ = self.tl.t
         data = self.data
         self.__dialog = wx.DirDialog(self, _("Save"), os.getcwd(),
                                      style=wx.DD_DIR_MUST_EXIST | wx.DD_CHANGE_DIR | wx.DD_NEW_DIR_BUTTON
@@ -407,7 +445,13 @@ class MainFrame(Mf):
 
     """ CALLBACK FUNCTIONS """
 
-    def on_info_select(self, event):
+    def refresh_PerInfo_tree(self):
+        self.m_treeCtrl_info.DeleteAllItems()
+        for asset in self.view_work:
+            asset.append_to_tree(self.m_treeCtrl_info, self.root)
+
+    def on_info_select(self, event: wx.TreeEvent):
+        _ = self.tl.t
         """
         tree element selection response method
         :param event: event
@@ -418,6 +462,7 @@ class MainFrame(Mf):
 
             # Select modifier key to reset
             self.m_bpButton_change.Enable(False)
+            self.m_treeCtrl_info.Unselect()
             # Get the id of the selected element
             val = event.GetItem()
 
@@ -430,7 +475,7 @@ class MainFrame(Mf):
 
             # If yes, show preview image
             if is_ok:
-                self.m_staticText_info.SetLabel(_("choose:{}").format(name.cn_name))
+                self.m_staticText_info.SetLabel(_("Choose:{}").format(name.cn_name))
                 
                 self.select_data = self.name = name
                 self.thread_quick = QuickRestore(name, self)
@@ -445,8 +490,8 @@ class MainFrame(Mf):
                 else:
                     is_ok, pos, type_is, index, name = self.view_work.find_in_each(
                         val)
+                
                 # found it
-
                 if is_ok:
                     # Available modifications
                     self.m_bpButton_change.Enable(True)
@@ -464,13 +509,13 @@ class MainFrame(Mf):
                         is_able = _("Not previewable")
 
                     if pos:
-                        pos = _("single type")
+                        pos = _("Single type")
                     else:
-                        pos = _("list")
+                        pos = _("List")
                     if type_is:
-                        type_is = _("texture file")
+                        type_is = _("Texture file")
                     else:
-                        type_is = _("mesh file")
+                        type_is = _("Mesh file")
 
                     self.m_staticText_info.SetLabel(
                         _("Select: {}{} in {}: {}, {}").format(pos, type_is, name.cn_name, self.m_treeCtrl_info.GetItemText(val), is_able))
@@ -483,29 +528,36 @@ class MainFrame(Mf):
                     else:
                         is_ok, type_is, target = self.view_work.find_action(
                             val)
-
+                    
                     if is_ok:
-                        if type_is == self.data.at_independent:
-                            self.independent_target(target)
+                        """if type_is == self.data.at_independent:
+                            self.independent_target(target)"""
                         if type_is == self.data.at_face_match:
                             self.face_match_target(target)
                         if type_is == self.data.at_atlas_split:
                             self.atlas_split_target(target)
-                        if type_is == self.data.at_set_able:
-                            self.set_able_target(target)
+                        """if type_is == self.data.at_set_able:
+                            self.set_able_target(target)"""
                         if type_is == self.data.at_remove_item:
                             self.remove_target(target)
                         if type_is == self.data.at_split_only:
                             self.split_target_only(target)
-                        if type_is == self.data.at_sprite_split:
-                            self.sprite_split(target)
+                        """if type_is == self.data.at_sprite_split:
+                            self.sprite_split(target)"""
                         """if type_is == self.data.at_change_local:
                             self.change_local(target)"""
                         if type_is == self.data.at_import_sprite:
                             self.import_png(target)
+                        if type_is == self.data.at_tex_path:
+                            self.is_single, self.type_is = True, True
+                            self.choice_file(None)
+                        if type_is == self.data.at_mesh_path:
+                            self.is_single, self.type_is = True, False
+                            self.choice_file(None)
 
     def choice_file(self, event):
         #Select the corresponding file
+        _ = self.tl.t
         is_ok = self.change_path(
             self.is_single, self.type_is, self.name, self.index)
         if not is_ok:
@@ -521,8 +573,9 @@ class MainFrame(Mf):
         :param event:
         :return:
         """
+        _ = self.tl.t
         data = self.data
-        show = ["Export restored assets", "Export unrestorable assets", "Export selected asset", "Export all"]
+        show = [_("Export restored assets"), _("Export unrestorable assets"), _("Export selected asset"), _("Export all")]
         #Add unavailable suffix
         if len(self.painting_work.build_able()) == 0:
             show[data.et_all] += _("(unavailable)")

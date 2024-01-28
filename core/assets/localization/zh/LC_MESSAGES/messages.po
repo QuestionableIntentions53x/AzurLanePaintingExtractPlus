@@ -1,0 +1,931 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2024-01-27 16:31-0500\n"
+"PO-Revision-Date: 2024-01-27 16:32-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+"X-Poedit-Basepath: ../../../../src\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: frame_classes/SpriteSpiltFrame.py:44
+msgid ""
+"Invalid path_ID, all imported objects will be cut, which may produce wrong "
+"cutting results"
+msgstr "无效的path_ID，将切割所有导入对象，这可能产生错误的切割结果"
+
+#: frame_classes/SpriteSpiltFrame.py:44 frame_classes/location_update.py:48
+#: static_classes/update_localization.py:391
+msgid "Message"
+msgstr "信息"
+
+#: frame_classes/SpriteSpiltFrame.py:57
+msgid ""
+"Completed importing {} files ({} of which match Path_ID and were read "
+"successfully)"
+msgstr "完成导入{}个文件(其中{}个符合 Path_ID 且读取成功)"
+
+#: frame_classes/SpriteSpiltFrame.py:59
+msgid ""
+"Import Error!\n"
+"{}"
+msgstr "导入时出错! {}"
+
+#: frame_classes/SpriteSpiltFrame.py:74
+msgid "Currently previewing [{}], size: {}"
+msgstr "当前正在预览【{}】,尺寸: {}"
+
+#: frame_classes/SpriteSpiltFrame.py:78
+msgid "Save current preview"
+msgstr "保存当前预览"
+
+#: frame_classes/SpriteSpiltFrame.py:78
+msgid "Save all"
+msgstr "保存全部"
+
+#: frame_classes/SpriteSpiltFrame.py:79
+msgid "Select save type"
+msgstr "选择保存类型"
+
+#: frame_classes/SpriteSpiltFrame.py:79 frame_classes/main_frame.py:424
+msgid "Save"
+msgstr "保存"
+
+#: frame_classes/SpriteSpiltFrame.py:83 frame_classes/SpriteSpiltFrame.py:100
+msgid "Select the save directory (save all)"
+msgstr "选择保存目录（保存全部）"
+
+#: frame_classes/SpriteSpiltFrame.py:90
+msgid "Select the save path (save [{}])"
+msgstr "选择保存路径（保存【{}】）"
+
+#: frame_classes/SpriteSpiltFrame.py:107 frame_classes/location_update.py:48
+#: static_classes/update_localization.py:388
+msgid "Done!"
+msgstr "完成！"
+
+#: frame_classes/atlas_spilt_frame.py:33
+msgid "Target name:{}"
+msgstr "目标名称：{}"
+
+#: frame_classes/atlas_spilt_frame.py:63
+msgid "Currently showing{}->{}"
+msgstr "当前正在显示 {}->{}"
+
+#: frame_classes/atlas_spilt_frame.py:70 frame_classes/atlas_spilt_frame.py:79
+msgid "Save component\"{}\""
+msgstr "保存组件“{}”"
+
+#: frame_classes/atlas_spilt_frame.py:90
+msgid "Complete the export and export the folder:{}"
+msgstr "完成导出，导出文件夹：{}"
+
+#: frame_classes/design_frame.py:39 frame_classes/design_frame.py:171
+msgid "Azur Lane Painting Extract"
+msgstr "Azur Lane Painting Extract"
+
+#: frame_classes/design_frame.py:56 frame_classes/design_frame.py:173
+msgid "All|Base|Skins|Retrofit|Promise|Young|MUSE μ|Other"
+msgstr ""
+"全部|仅原始立绘|仅皮肤立绘|仅改造立绘|仅婚纱立绘|仅幼女化立绘|仅μ兵装立绘|其"
+"他立绘"
+
+#: frame_classes/design_frame.py:80 frame_classes/design_frame.py:177
+#: frame_classes/design_frame.py:1122
+msgid "Export"
+msgstr "导出"
+
+#: frame_classes/design_frame.py:86 frame_classes/design_frame.py:179
+msgid "Set pairing file"
+msgstr "设置配对文件"
+
+#: frame_classes/design_frame.py:232
+msgid "Help"
+msgstr "帮助页面"
+
+#: frame_classes/design_frame.py:274
+msgid "Refresh"
+msgstr "刷新"
+
+#: frame_classes/design_frame.py:285
+msgid "URL:"
+msgstr "选中目标网址："
+
+#: frame_classes/design_frame.py:290 frame_classes/design_frame.py:293
+msgid ""
+"https://github.com/azurlane-doujin/AzurLanePaintingExtract-v1.0/blob/"
+"version1.4/HELP.md"
+msgstr ""
+
+#: frame_classes/design_frame.py:293
+msgid "Open in browser"
+msgstr "浏览器打开"
+
+#: frame_classes/design_frame.py:354
+msgid "Atlas Slicer"
+msgstr "Atlas 切割工具"
+
+#: frame_classes/design_frame.py:367 frame_classes/design_frame.py:1308
+msgid "Target:"
+msgstr "目标名称："
+
+#: frame_classes/design_frame.py:372
+msgid "Select Atlas File"
+msgstr "选择 Atlas 个文件"
+
+#: frame_classes/design_frame.py:372
+msgid "Atlas Data File (*.atlas;*.atlas.txt)|*.atlas;*.atlas.txt"
+msgstr "Atlas 切割信息文件(*.atlas;*.atlas.txt)|*.atlas;*.atlas.txt"
+
+#: frame_classes/design_frame.py:411 frame_classes/design_frame.py:1466
+msgid "Ready..."
+msgstr "就绪..."
+
+#: frame_classes/design_frame.py:471 frame_classes/design_frame.py:634
+msgid "Settings"
+msgstr "设置"
+
+#: frame_classes/design_frame.py:482 frame_classes/design_frame.py:636
+msgid "Language:"
+msgstr "语言:"
+
+#: frame_classes/design_frame.py:492 frame_classes/design_frame.py:642
+msgid "Automatically check for ship name updates on startup"
+msgstr "启动时自动检查船舶名称更新"
+
+#: frame_classes/design_frame.py:495 frame_classes/design_frame.py:644
+msgid "Update ship names"
+msgstr "更新船名"
+
+#: frame_classes/design_frame.py:502 frame_classes/design_frame.py:646
+msgid "Use localized ship names on export"
+msgstr "使用中文名作为导出文件名（如果可用）"
+
+#: frame_classes/design_frame.py:505 frame_classes/design_frame.py:648
+msgid "Create new folder on export in export directory"
+msgstr "在导出目标目录下新建导出文件夹"
+
+#: frame_classes/design_frame.py:511 frame_classes/design_frame.py:650
+msgid "Open export folder upon completion"
+msgstr "完成后打开导出目标文件夹"
+
+#: frame_classes/design_frame.py:515 frame_classes/design_frame.py:652
+msgid "Do not overwrite files on export"
+msgstr "跳过目标目录中已经存在的同名文件"
+
+#: frame_classes/design_frame.py:518 frame_classes/design_frame.py:654
+msgid "Clear the original list when importing"
+msgstr "导入时清空原有列表"
+
+#: frame_classes/design_frame.py:521 frame_classes/design_frame.py:656
+msgid "Exit after export"
+msgstr "完成任务后退出"
+
+#: frame_classes/design_frame.py:524 frame_classes/design_frame.py:658
+msgid "When exporting all, copy at the same time and cannot be restored."
+msgstr "导出全部时同时拷贝不可还原."
+
+#: frame_classes/design_frame.py:527 frame_classes/design_frame.py:660
+msgid "Case insensitive localization"
+msgstr "本地化配对时忽略大小写"
+
+#: frame_classes/design_frame.py:715
+msgid "Edit Localization Values"
+msgstr "编辑键值对"
+
+#: frame_classes/design_frame.py:735
+msgid "Key"
+msgstr "键"
+
+#: frame_classes/design_frame.py:743
+msgid "Value"
+msgstr "值"
+
+#: frame_classes/design_frame.py:751
+msgid "Save to file"
+msgstr "添加下一个未本地化信息"
+
+#: frame_classes/design_frame.py:767
+msgid "Overwrite on import"
+msgstr "清空"
+
+#: frame_classes/design_frame.py:770
+msgid "Add to"
+msgstr "添加"
+
+#: frame_classes/design_frame.py:840
+msgid "Advanced Settings"
+msgstr "高级设置"
+
+#: frame_classes/design_frame.py:846
+msgid "Mesh file pairing priority"
+msgstr "Mesh 文件配对优先级"
+
+#: frame_classes/design_frame.py:848
+msgid "First priority"
+msgstr "第一优先级"
+
+#: frame_classes/design_frame.py:856
+msgid "Second priority"
+msgstr "第二优先级"
+
+#: frame_classes/design_frame.py:867
+msgid "Texture2D pairing priority"
+msgstr "Texture2D 配对优先级"
+
+#: frame_classes/design_frame.py:869
+msgid "first priority"
+msgstr "第一优先级"
+
+#: frame_classes/design_frame.py:877
+msgid "second priority"
+msgstr "第二优先级"
+
+#: frame_classes/design_frame.py:888
+msgid "localization editor"
+msgstr "本地化编辑器"
+
+#: frame_classes/design_frame.py:892
+msgid "Update localized resources"
+msgstr "更新本地化资源"
+
+#: frame_classes/design_frame.py:898
+msgid "Edit localized resources"
+msgstr "编辑本地化资源"
+
+#: frame_classes/design_frame.py:910
+msgid "Bigfun Tutorial"
+msgstr "Bigfun教程"
+
+#: frame_classes/design_frame.py:973
+msgid "Expression Editor"
+msgstr "接头器"
+
+#: frame_classes/design_frame.py:1007 frame_classes/design_frame.py:1031
+msgid "X-Offset"
+msgstr "左上角横坐标"
+
+#: frame_classes/design_frame.py:1015 frame_classes/design_frame.py:1039
+msgid "Y-Offset"
+msgstr "左上角纵坐标"
+
+#: frame_classes/design_frame.py:1027
+msgid "Offset"
+msgstr "接头"
+
+#: frame_classes/design_frame.py:1051
+msgid "View"
+msgstr "立绘坐标"
+
+#: frame_classes/design_frame.py:1062
+msgid "Preview"
+msgstr "头预览"
+
+#: frame_classes/design_frame.py:1069
+msgid "Imported facial expressions"
+msgstr "导入的面部表情"
+
+#: frame_classes/design_frame.py:1081
+msgid "Transparent background"
+msgstr "透明背景叠加"
+
+#: frame_classes/design_frame.py:1084
+msgid "Export at minimum size"
+msgstr "以最小尺寸导出"
+
+#: frame_classes/design_frame.py:1101
+msgid "NONE"
+msgstr "NONE"
+
+#: frame_classes/design_frame.py:1109
+msgid "Step size:"
+msgstr "步长："
+
+#: frame_classes/design_frame.py:1228
+msgid "Update localization files"
+msgstr "更新本地化文件"
+
+#: frame_classes/design_frame.py:1240
+msgid "Localization"
+msgstr "本地化编辑器"
+
+#: frame_classes/design_frame.py:1265
+msgid "Load file"
+msgstr "加载文件"
+
+#: frame_classes/design_frame.py:1287
+msgid "Apply All"
+msgstr "应用-全部"
+
+#: frame_classes/design_frame.py:1290
+msgid "Apply New"
+msgstr "应用-新增"
+
+#: frame_classes/design_frame.py:1293
+msgid "Apply Overwrite"
+msgstr "应用-覆盖"
+
+#: frame_classes/design_frame.py:1296 static_classes/update_localization.py:56
+msgid "Cancel"
+msgstr "取消"
+
+#: frame_classes/design_frame.py:1378
+msgid "Sprite Cutting"
+msgstr "Sprite 切割"
+
+#: frame_classes/design_frame.py:1399
+msgid "Path ID:"
+msgstr "Path ID:"
+
+#: frame_classes/design_frame.py:1415
+msgid "Dump type:"
+msgstr "Dump 类型："
+
+#: frame_classes/face_match_frame.py:150
+msgid "Canvas expanded {} pixels to the left"
+msgstr "画布向左扩展 {} 像素"
+
+#: frame_classes/face_match_frame.py:156
+msgid "Canvas expanded {} pixels to the right"
+msgstr "画布向右扩展 {} 像素"
+
+#: frame_classes/face_match_frame.py:169
+msgid "Canvas expanded upward by {} pixels"
+msgstr "画布向上扩展 {} 像素"
+
+#: frame_classes/face_match_frame.py:174
+msgid "Canvas expanded downward by {} pixels"
+msgstr "画布向下扩展 {} 像素"
+
+#: frame_classes/face_match_frame.py:265
+msgid "No face selected!"
+msgstr "没有选脸！"
+
+#: frame_classes/face_match_frame.py:311
+msgid "Connecting:{}-{}-{}"
+msgstr "正在接头：{}-{}-{}"
+
+#: frame_classes/face_match_frame.py:315
+msgid "Joint completed"
+msgstr "接头完成"
+
+#: frame_classes/face_match_frame.py:443
+msgid "Select export type"
+msgstr "选择导出类型"
+
+#: frame_classes/face_match_frame.py:443
+msgid "Export current selection"
+msgstr "仅导出当前表情组合"
+
+#: frame_classes/face_match_frame.py:443 frame_classes/main_frame.py:578
+msgid "Export all"
+msgstr "导出全部相同尺寸表情组合"
+
+#: frame_classes/face_match_frame.py:465
+msgid "The size is modified to: {}"
+msgstr "尺寸修改为：{}"
+
+#: frame_classes/face_match_frame.py:468
+msgid "Export {}-{} expression combination"
+msgstr "导出 {}-{} 表情组合"
+
+#: frame_classes/face_match_frame.py:475
+msgid "Export folder"
+msgstr "导出文件夹"
+
+#: frame_classes/location_update.py:42
+msgid "Updating data..."
+msgstr "正在更新数据..."
+
+#: frame_classes/location_update.py:101
+msgid "Loading completed: Localization provided by {}"
+msgstr "加载完成！来自 {} 提供的本地化方案"
+
+#: frame_classes/location_update.py:105
+msgid "Loading, please wait..."
+msgstr "加载中，请稍后..."
+
+#: frame_classes/location_update.py:109
+msgid "Select json file"
+msgstr "选择 json 文件"
+
+#: frame_classes/location_update.py:120
+msgid "Loading completed! From local file"
+msgstr "加载完成！来自本地文件"
+
+#: frame_classes/location_update.py:129
+msgid "New localization source"
+msgstr "新增本地化资源标签（不能与已有的本地化资源标签同名）"
+
+#: frame_classes/location_update.py:129
+msgid "Add label"
+msgstr "添加标签"
+
+#: frame_classes/location_update.py:130
+msgid "Locale-{}"
+msgstr "本地化资源-{}"
+
+#: frame_classes/location_update.py:136
+msgid "Localization name already exists!"
+msgstr "该标签已经存在！"
+
+#: frame_classes/location_update.py:136 frame_classes/main_frame.py:216
+#: frame_classes/main_frame.py:564 frame_classes/main_frame.py:601
+#: frame_classes/main_frame.py:617 frame_classes/main_frame.py:623
+#: frame_classes/main_frame.py:631 frame_classes/main_frame.py:635
+#: frame_classes/names_edit_frame.py:63 static_classes/image_deal.py:531
+#: static_classes/update_localization.py:391
+msgid "Error"
+msgstr "错误"
+
+#: frame_classes/location_update.py:142
+msgid "Web address to json file"
+msgstr "新增本地化资源地址"
+
+#: frame_classes/location_update.py:142
+msgid "Add address"
+msgstr "添加地址"
+
+#: frame_classes/main_frame.py:66
+msgid "Azur Lane"
+msgstr "Azur Lane"
+
+#: frame_classes/main_frame.py:166
+msgid "Select Texture File"
+msgstr "选择更改Texture文件"
+
+#: frame_classes/main_frame.py:166 frame_classes/main_frame.py:180
+msgid "Select file"
+msgstr "选择更改文件"
+
+#: frame_classes/main_frame.py:180
+msgid "Select Mesh File"
+msgstr "选择更改Mesh文件"
+
+#: frame_classes/main_frame.py:208
+msgid "Name of duplicated ship instance"
+msgstr "独立组合的名称"
+
+#: frame_classes/main_frame.py:216
+msgid "The name already exists!"
+msgstr "该名称已经存在！"
+
+#: frame_classes/main_frame.py:224
+msgid "Face change failed! Must be a restoreable object"
+msgstr "换头失败！必须是可还原对象"
+
+#: frame_classes/main_frame.py:226
+msgid "Started changing face"
+msgstr "开始换头"
+
+#: frame_classes/main_frame.py:227
+msgid "Select Accessory Type:"
+msgstr "选择类型："
+
+#: frame_classes/main_frame.py:228
+msgid "Facial expression (680x470)"
+msgstr "面部表情附加模式（窗口尺寸：680 X 470）"
+
+#: frame_classes/main_frame.py:228
+msgid "Ship decoration (1920x1080)"
+msgstr "舰装-人物拼接模式（窗口尺寸：1920X1080）"
+
+#: frame_classes/main_frame.py:240
+msgid "Cutting failed, there must be an available Texture2D file"
+msgstr "切割失败，必须有一个可用Texture2D文件"
+
+#: frame_classes/main_frame.py:243
+msgid "Start changing the head!"
+msgstr "开始换头！"
+
+#: frame_classes/main_frame.py:253
+msgid "{} has been converted and is now {}"
+msgstr "{} 已转换,现在为 {}"
+
+#: frame_classes/main_frame.py:258
+msgid ""
+"Are you sure you want to remove\n"
+"{}"
+msgstr "确实要移除 {}"
+
+#: frame_classes/main_frame.py:258 frame_classes/names_edit_frame.py:69
+#: frame_classes/names_edit_frame.py:112 frame_classes/names_edit_frame.py:120
+msgid "Information"
+msgstr "信息"
+
+#: frame_classes/main_frame.py:269
+msgid "{} cannot be cut and is a non-reducible object"
+msgstr "{} 无法切割，为非可还原对象"
+
+#: frame_classes/main_frame.py:272
+msgid "Select output folder"
+msgstr "选择保存文件夹"
+
+#: frame_classes/main_frame.py:280
+msgid "{} cutting completed, saved to path: {}"
+msgstr "{} 切割已完成，保存于 {}"
+
+#: frame_classes/main_frame.py:285
+msgid "{} cannot be cut, at least one Texture2D is required"
+msgstr "{} 无法切割，至少需要一个Texture2D"
+
+#: frame_classes/main_frame.py:287
+msgid "Start Sprite cutting!"
+msgstr "开始 Sprite 切割！"
+
+#: frame_classes/main_frame.py:310
+msgid "PNG Path"
+msgstr "路径"
+
+#: frame_classes/main_frame.py:340
+msgid "Reset restoration progress!"
+msgstr "重置还原进度！"
+
+#: frame_classes/main_frame.py:353 frame_classes/main_frame.py:604
+#: frame_classes/main_frame.py:637
+msgid "Save-Azur Lane"
+msgstr "保存-Azur Lane"
+
+#: frame_classes/main_frame.py:478
+msgid "Choose:{}"
+msgstr "选择：{}"
+
+#: frame_classes/main_frame.py:507
+msgid "Previewable"
+msgstr "可预览"
+
+#: frame_classes/main_frame.py:509
+msgid "Not previewable"
+msgstr "不可预览"
+
+#: frame_classes/main_frame.py:512
+msgid "Single type"
+msgstr "单个类型"
+
+#: frame_classes/main_frame.py:514
+msgid "List"
+msgstr "列表"
+
+#: frame_classes/main_frame.py:516
+msgid "Texture file"
+msgstr "Texture 文件"
+
+#: frame_classes/main_frame.py:518
+msgid "Mesh file"
+msgstr "Mesh 文件"
+
+#: frame_classes/main_frame.py:521
+msgid "Select: {}{} in {}: {}, {}"
+msgstr "选择：{} {} 中的 {}：{}, {}"
+
+#: frame_classes/main_frame.py:564
+msgid "No data!"
+msgstr "无数据！"
+
+#: frame_classes/main_frame.py:578
+msgid "Export restored assets"
+msgstr "导出全部可还原"
+
+#: frame_classes/main_frame.py:578
+msgid "Export unrestorable assets"
+msgstr "拷贝全部不可还原"
+
+#: frame_classes/main_frame.py:578
+msgid "Export selected asset"
+msgstr "导出选择项"
+
+#: frame_classes/main_frame.py:581 frame_classes/main_frame.py:583
+#: frame_classes/main_frame.py:585 frame_classes/main_frame.py:588
+#: frame_classes/main_frame.py:591
+msgid "(unavailable)"
+msgstr "（不可用）"
+
+#: frame_classes/main_frame.py:593
+msgid "Choose export type"
+msgstr "选择类型"
+
+#: frame_classes/main_frame.py:601 frame_classes/main_frame.py:617
+#: frame_classes/main_frame.py:623 frame_classes/main_frame.py:631
+#: frame_classes/main_frame.py:635
+msgid "Not available!"
+msgstr "不可用！"
+
+#: frame_classes/names_edit_frame.py:63
+msgid "Key or value cannot be blank!"
+msgstr "键或值不能为空白！"
+
+#: frame_classes/names_edit_frame.py:69
+msgid ""
+"[{}] already exists in the key group. Clicking [Confirm] will overwrite it "
+"with the new value"
+msgstr "【{}】已经存在键组中，点击【确认】将会使用新值覆盖"
+
+#: frame_classes/names_edit_frame.py:90
+msgid "Select localization file (.json)"
+msgstr "加载键值对文件（json）"
+
+#: frame_classes/names_edit_frame.py:99
+msgid "Invalid file"
+msgstr "不可用文件"
+
+#: frame_classes/names_edit_frame.py:112
+msgid ""
+"Import key-value pair file successfully!\n"
+"\tOverwrite: {}\n"
+"\tAdd: {}"
+msgstr "导入键值对文件成功！\\n\\t覆盖：{}\\n\\t新增：{}"
+
+#: frame_classes/names_edit_frame.py:115
+msgid ""
+"Error importing key-value pair file!\n"
+"{}"
+msgstr ""
+"导入键值对文件出现错误！\n"
+"{}"
+
+#: frame_classes/names_edit_frame.py:120
+msgid "Apply these changes?"
+msgstr "要应用这些变化吗？"
+
+#: frame_classes/names_edit_frame.py:142
+msgid "The unnamed localization queue has been emptied"
+msgstr "未命名的本地化队列已经清空"
+
+#: frame_classes/names_edit_frame.py:142
+msgid "Warning"
+msgstr "警告"
+
+#: static_classes/file_read.py:78
+msgid "Import completed, no new items!"
+msgstr "导入完成，无新增项！"
+
+#: static_classes/file_read.py:80
+msgid "Import failed, no items to import!"
+msgstr "导入失败，无导入项！"
+
+#: static_classes/file_read.py:84
+msgid "Import failed, an error occurred! {}"
+msgstr "导入失败，发生错误！{}"
+
+#: static_classes/file_read.py:86
+msgid "Import successful! Successfully imported {} items!"
+msgstr "导入成功！ 成功导入{}个！"
+
+#: static_classes/image_deal.py:309
+msgid "Successfully restored: {}"
+msgstr "成功还原："
+
+#: static_classes/image_deal.py:357 static_classes/image_deal.py:382
+msgid "Successfully saved to: {}"
+msgstr "已成功保存至"
+
+#: static_classes/locale.py:22
+msgid "Language already selected!"
+msgstr "先前已选择语言！"
+
+#: static_classes/locale.py:25 static_classes/locale.py:33
+msgid "Localization [{}] does not exist!"
+msgstr "本地化 [{}] 不存在！"
+
+#: static_classes/update_localization.py:21
+msgid "Ship Name Updater"
+msgstr "船名更新器"
+
+#: static_classes/update_localization.py:53
+msgid "Apply"
+msgstr "应用-全部"
+
+#: static_classes/update_localization.py:59
+msgid "Disable Updates"
+msgstr "禁用更新"
+
+#: static_classes/update_localization.py:69
+msgid "Loading..."
+msgstr "加载中，请稍后..."
+
+#: static_classes/update_localization.py:120
+#: static_classes/update_localization.py:121
+msgid "Transparent"
+msgstr "透明背景叠加"
+
+#: static_classes/update_localization.py:122
+msgid "Oath"
+msgstr "婚纱"
+
+#: static_classes/update_localization.py:123
+#: static_classes/update_localization.py:124
+#: static_classes/update_localization.py:125
+#: static_classes/update_localization.py:126
+#: static_classes/update_localization.py:127
+#: static_classes/update_localization.py:128
+#: static_classes/update_localization.py:129
+#: static_classes/update_localization.py:130
+#: static_classes/update_localization.py:131
+#: static_classes/update_localization.py:274
+#: static_classes/update_localization.py:275
+#: static_classes/update_localization.py:278
+msgid "Rigging"
+msgstr "索具"
+
+#: static_classes/update_localization.py:136
+msgid "Retrofit"
+msgstr "现代化"
+
+#: static_classes/update_localization.py:137
+msgid "Default"
+msgstr "默认"
+
+#: static_classes/update_localization.py:147
+#: static_classes/update_localization.py:364
+msgid "Update Existing Localization Resources ({})"
+msgstr "已经存在的本地化资源 ({})"
+
+#: static_classes/update_localization.py:149
+#: static_classes/update_localization.py:365
+#: structs_classes/location_group.py:77
+msgid "New Localization Resources ({})"
+msgstr "新增的的本地化资源 ({})"
+
+#: static_classes/update_localization.py:157
+#: static_classes/update_localization.py:169
+#: static_classes/update_localization.py:172
+#: static_classes/update_localization.py:218
+msgid "Error ({}) when connecting to [{}]"
+msgstr "错误 ({}) 当连接到 [{}]"
+
+#: static_classes/update_localization.py:211
+msgid "Error ({}) when parsing data"
+msgstr "错误 ({}) 解析数据时"
+
+#: static_classes/update_localization.py:260
+#: static_classes/update_localization.py:264
+#: static_classes/update_localization.py:265
+msgid "Other"
+msgstr "其他"
+
+#: static_classes/update_localization.py:298
+msgid "Checking version..."
+msgstr "版本检查..."
+
+#: static_classes/update_localization.py:304
+msgid "Begin updating from {} to {}"
+msgstr "开始从 {} 更新到 {}"
+
+#: static_classes/update_localization.py:312
+#: static_classes/update_localization.py:333
+msgid "Fetching {} ships from {}..."
+msgstr "得到 {} 船舶从 {}..."
+
+#: static_classes/update_localization.py:318
+#: static_classes/update_localization.py:340
+msgid "Fetching {} textures from {}..."
+msgstr "得到 {} 纹理来自 {}..."
+
+#: static_classes/update_localization.py:353
+#: static_classes/update_localization.py:354
+msgid "Critical ship name update failure:{}"
+msgstr "严重的船舶名称更新失败：{}"
+
+#: static_classes/update_localization.py:374
+msgid "Original Name: \"{}\""
+msgstr "本地化原始名：”{}“"
+
+#: static_classes/update_localization.py:375
+msgid "Updated Name:  \"{}\""
+msgstr "更新的本地化名称：“ {}”"
+
+#: static_classes/update_localization.py:398
+msgid "Saving data..."
+msgstr "正在更新数据..."
+
+#: structs_classes/drop_order.py:30
+msgid "Start importing {} files"
+msgstr "开始导入 {} 个文件"
+
+#: structs_classes/extract_structs.py:142
+msgid "Name: {}"
+msgstr "名称：{}"
+
+#: structs_classes/extract_structs.py:145
+msgid "Index name: {}"
+msgstr "索引名称：{}"
+
+#: structs_classes/extract_structs.py:147
+#: structs_classes/extract_structs.py:227
+msgid "Texture file path: {}"
+msgstr "Texture文件路径：{}"
+
+#: structs_classes/extract_structs.py:149
+msgid "Other Texture path({})"
+msgstr "其他Texture路径 ({})"
+
+#: structs_classes/extract_structs.py:154
+#: structs_classes/extract_structs.py:232
+msgid "Mesh file path: {}"
+msgstr "Mesh文件路径： {}"
+
+#: structs_classes/extract_structs.py:156
+msgid "Other Mesh path({})"
+msgstr "其他Mesh路径({})"
+
+#: structs_classes/extract_structs.py:161
+msgid "Function Button"
+msgstr "功能按键"
+
+#: structs_classes/extract_structs.py:168
+msgid "Import facial expression"
+msgstr "为当前立绘添加附加表情"
+
+#: structs_classes/extract_structs.py:184
+msgid "Export sprite sliced on texture boundry"
+msgstr "仅进行立绘还原切割"
+
+#: structs_classes/extract_structs.py:188
+msgid "Import PNG and convert to texture"
+msgstr "导入 PNG 并转换为纹理"
+
+#: structs_classes/extract_structs.py:192
+msgid "Delete"
+msgstr "删除该元素"
+
+#: structs_classes/location_group.py:35 structs_classes/location_group.py:37
+msgid "Original Localization Name: \"{}\""
+msgstr "本地化原始名：”{}“"
+
+#: structs_classes/location_group.py:38
+msgid "Localization Name: \"{}\""
+msgstr "原始本地化名称：”{}”"
+
+#: structs_classes/location_group.py:75
+msgid "Existing Localization Resources ({})"
+msgstr "已经存在的本地化资源 ({})"
+
+#: structs_classes/location_group.py:76
+msgid "Override Existing Localization Resources ({})"
+msgstr "覆盖原有的本地化资源 ({})"
+
+#: thread_classes/extract_thread.py:50 thread_classes/extract_thread.py:203
+msgid "Currently at {}! For: {} Type - Direct Restore"
+msgstr "当前第 {} 个！为：{} 类型-直接还原"
+
+#: thread_classes/extract_thread.py:123 thread_classes/processing.py:77
+msgid "Processing error! For {}"
+msgstr "处理出错！，为 {}"
+
+#: thread_classes/extract_thread.py:146
+msgid "Current: {}, Copy Only"
+msgstr "当前：{} ,仅拷贝"
+
+#: thread_classes/extract_thread.py:148 thread_classes/extract_thread.py:351
+msgid "Completed, Total {}"
+msgstr "完成，共 {}"
+
+#: thread_classes/extract_thread.py:276
+msgid "Processing error! For {}, in {}"
+msgstr "处理出错！，为 {} ,在 {}"
+
+#: thread_classes/extract_thread.py:309
+msgid "Currently: {}, Copy Only"
+msgstr "当前：{}, 仅拷贝"
+
+#: thread_classes/processing.py:17
+msgid "Current {}th! As: {} Type - Direct Restoration"
+msgstr "当前第 {} 个！为：{} 类型-直接还原"
+
+#~ msgid "Sprite slicer"
+#~ msgstr "进行Q版小人切割"
+
+#~ msgid "Force to a reversible state [{}]"
+#~ msgstr "强制转换为可还原状态【当前】"
+
+#~ msgid "Convert PNG to tex"
+#~ msgstr "转换成纹理"
+
+#~ msgid "Advanced..."
+#~ msgstr "高级设置..."
+
+#, fuzzy
+#~| msgid "Select json file"
+#~ msgid "Select to change file"
+#~ msgstr "选择 json 文件"
+
+#, fuzzy
+#~| msgid "Select json file"
+#~ msgid "Select to change the Mesh file"
+#~ msgstr "选择 json 文件"
+
+#, fuzzy
+#~| msgid "Select json file"
+#~ msgid "Select to change the file"
+#~ msgstr "选择 json 文件"
+
+#~ msgid "AzurLaneTools"
+#~ msgstr "AzurLaneTools"
+
+#~ msgid "Duplicate"
+#~ msgstr "将当前的组合独立"

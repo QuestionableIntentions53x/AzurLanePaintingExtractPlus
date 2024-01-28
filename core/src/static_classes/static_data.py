@@ -52,6 +52,7 @@ class GlobalData:
     @property
     def at_split_only(self):
         return 5
+    
     @property
     def at_sprite_split(self):
         return 6
@@ -64,6 +65,14 @@ class GlobalData:
     def at_import_sprite(self):
         return 8
 
+    @property
+    def at_tex_path(self):
+        return 9
+    
+    @property
+    def at_mesh_path(self):
+        return 10
+    
     # tree_filter
     @property
     def tf_all(self):
@@ -214,6 +223,18 @@ class GlobalData:
     @property
     def sk_input_filter_mesh(self):
         return "input_filter_mesh"
+
+    @property
+    def sk_locale(self):
+        return "locale"
+
+    @property
+    def sk_automatic_name_update(self):
+        return "automatic_name_update"
+
+    @property
+    def sk_locale_name_version(self):
+        return "locale_name_version"
 
     @property
     def sk_input_filter(self):

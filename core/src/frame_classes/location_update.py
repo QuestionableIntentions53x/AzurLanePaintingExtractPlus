@@ -13,9 +13,10 @@ from ..structs_classes.location_group import LocationList
 
 class LocationUpdate(MyDialogUpdateLocation):
     def __init__(self, parent, names, path, local_data):
-        super(LocationUpdate, self).__init__(parent)
+        super(LocationUpdate, self).__init__(parent, parent.frame.frame.tl)
         self.path = path
         self.names = names
+        self.frame = parent
         self.load_data = {}
 
         self.root = self.m_treeCtrl_info.AddRoot("")
@@ -37,10 +38,11 @@ class LocationUpdate(MyDialogUpdateLocation):
         self.local_work.add_to_tree(self.m_treeCtrl_info, self.root)
 
     def update(self, data):
+        _ = self.frame.frame.frame.tl.t
         self.m_staticText_info.SetLabel(_("Updating data..."))
         for key, item in data.items():
             self.names[key] = item
-        with open(os.path.join(self.path, "core\\assets\\names.json"), "w")as file:
+        with open(os.path.join(self.path, "core\\assets\\names.json"), "w") as file:
             json.dump(self.names, file)
 
         wx.MessageBox(_("Done!"), _("Message"), wx.ICON_INFORMATION)
@@ -48,13 +50,26 @@ class LocationUpdate(MyDialogUpdateLocation):
 
     # TODO: Load localization file found in height_setting.json for all languages
     def request_info(self, event):
+        _ = self.frame.frame.frame.tl.t
         index = event.GetString()
 
         def work():
             try:
-                r = requests.get(self.available_list[index], timeout=1000)
-                # TODO: Place this in a config file too
-                f = requests.get("https://raw.githubusercontent.com/AzurLaneTools/AzurLaneData/main/EN/ShareCfg/painting_filte_map.json", timeout=1000)
+                lang = self.frame.frame.frame.tl.selected_language
+
+                if lang == "zh":
+                    lang = "CN"
+                elif lang == "ko":
+                    lang = "KN"
+                elif lang == "ja":
+                    lang = "JP"
+                elif lang == "zh-tw":
+                    lang = "TW"
+                else:
+                    lang = "EN"
+
+                r = requests.get("https://raw.githubusercontent.com/AzurLaneTools/AzurLaneData/main/{}/ShareCfg/ship_skin_template.json".format(lang), timeout=1000)
+                f = requests.get("https://raw.githubusercontent.com/AzurLaneTools/AzurLaneData/main/{}/ShareCfg/painting_filte_map.json".format(lang), timeout=1000)
                 if r.status_code == 200 and f.status_code == 200:
                     raw = json.loads(r.text)
                     names = dict()
@@ -75,7 +90,7 @@ class LocationUpdate(MyDialogUpdateLocation):
                     
                     # Load all other assets related to the ship (backgrounds, rigging, etc)
                     for ship in extra_textures_raw:
-                        if(ship == "all"):
+                        if ship == "all":
                             continue
                         for skin in extra_textures_raw[ship]["res_list"]:
                             if skin.endswith("_tex"):

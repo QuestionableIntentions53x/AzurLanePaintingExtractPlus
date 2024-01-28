@@ -44,12 +44,12 @@ class DropOrder(wx.FileDropTarget):
             returned_mesh, mesh_info = FileFilter.file_deal(paths, self.parent, False,
                                                             self.frame.setting_info[self.data.sk_input_filter_mesh],
                                                             True, "-mesh", self.frame.names, self.data.fi_mesh_type)
-            if returned_tex:
+            """if returned_tex:
                 self.frame.m_gauge_state.SetValue(50)
             if returned_mesh:
-                self.frame.m_gauge_state.SetValue(100)
+                self.frame.m_gauge_state.SetValue(100)"""
 
-            self.view_work = es.PerWorkList(self.parent)
+            self.view_work = es.PerWorkList(self.parent, self.parent)
 
             self.frame.m_treeCtrl_info.DeleteChildren(self.frame.root)
             self.parent.show_in_tree(self.frame.m_treeCtrl_info, self.frame.root)

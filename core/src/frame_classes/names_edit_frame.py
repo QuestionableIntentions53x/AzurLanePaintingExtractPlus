@@ -12,7 +12,7 @@ from core.src.frame_classes.design_frame import MyDialogKetValueSetting
 
 class NamesEditFrame(MyDialogKetValueSetting):
     def __init__(self, parent, names, path, miss_list: list):
-        super(NamesEditFrame, self).__init__(parent)
+        super(NamesEditFrame, self).__init__(parent, parent.frame.frame.tl)
         self.names = names
         self.edit_group = OrderedDict(self.names)
         self.key_group = list(self.edit_group.keys())
@@ -45,7 +45,7 @@ class NamesEditFrame(MyDialogKetValueSetting):
         index = event.GetSelection()
         key = self.key_group[index]
         value = self.edit_group.get(key)
-        wx.MessageBox(_("'{}'->'{}'").format(key, value), "information")
+        wx.MessageBox("'{}'->'{}'".format(key, value), "information")
 
     def edit_exist_item(self, event):
         index = event.GetSelection()

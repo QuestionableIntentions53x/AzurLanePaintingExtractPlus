@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import traceback
 
 from core.src.frame_classes.main_frame import MainFrame
 
@@ -14,15 +15,15 @@ class LogHolder(object):
         self.is_last_n=True
 
     def write(self, message):
-        if self.is_last_n:
+        """if self.is_last_n:
             message=f"\n\t{time.asctime(self.t)}\n--------------\n{message}"
             self.is_last_n=False
         if message.endswith("\n"):
             message=f"{message}\n--------------\n"
-            self.is_last_n=True
+            self.is_last_n=True"""
         self.stream.write(message)
 
-        with open(self.file_name,'a')as file:
+        with open(self.file_name,'a',encoding="utf8")as file:
             file.write(message)
 
     def flush(self):

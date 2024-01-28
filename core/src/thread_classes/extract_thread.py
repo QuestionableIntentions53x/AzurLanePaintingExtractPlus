@@ -16,7 +16,7 @@ from core.src.structs_classes.extract_structs import PerInfo, PerWorkList
 
 class RestoreThread(threading.Thread):
 
-    def __init__(self, id_thread, name, able: PerWorkList, unable: PerWorkList, parent: MainFrame, setting,
+    def __init__(self, id_thread, name, able: PerWorkList, unable: PerWorkList, parent: MainFrame, setting: dict,
                  names, save_path, ignore_case=False):
         threading.Thread.__init__(self)
 
@@ -96,7 +96,7 @@ class RestoreThread(threading.Thread):
                                     val = value
                         else:
                             if now_info.has_cn and self.setting[data.sk_use_cn_name]:
-                                val = now_info.cn_name
+                                val = now_info.sanitize_file_name(now_info.cn_name)
                             else:
                                 val = now_info.name
 
@@ -171,7 +171,7 @@ class RestoreThread(threading.Thread):
 
 
 class WorkThread(threading.Thread):
-    def __init__(self, name, work_queue, err_queue, locker, parent: MainFrame, setting,
+    def __init__(self, name, work_queue, err_queue, locker, parent: MainFrame, setting: dict,
                  names, save_path, size, ignore_case=False, ):
         super(WorkThread, self).__init__(name=name, )
         self.err_queue = err_queue
@@ -249,7 +249,7 @@ class WorkThread(threading.Thread):
                                     val = value
                         else:
                             if now_info.has_cn and self.setting[data.sk_use_cn_name]:
-                                val = now_info.cn_name
+                                val = now_info.sanitize_file_name(now_info.cn_name)
                             else:
                                 val = now_info.name
 
@@ -312,7 +312,7 @@ class SideWorkThread(threading.Thread):
 
 
 class WatchDogThread(threading.Thread):
-    def __init__(self, work_queue, err_queue, able_group, lock, frame, setting, size, threads):
+    def __init__(self, work_queue, err_queue, able_group, lock, frame, setting: dict, size, threads):
         super(WatchDogThread, self).__init__(name="Watch dog")
         self.threads = threads
         self.size = size

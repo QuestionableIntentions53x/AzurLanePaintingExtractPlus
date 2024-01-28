@@ -8,11 +8,12 @@ _ = gettext.gettext
 from core.src.frame_classes.design_frame import DialogSpiltSprite
 from core.src.static_classes.image_deal import ImageWork
 from core.src.structs_classes.drop_order import SpriteDropOrder
+from core.src.structs_classes.extract_structs import PerInfo
 
 
 class SpriteSplitFrame(DialogSpiltSprite):
-    def __init__(self, parent, target):
-        super(SpriteSplitFrame, self).__init__(parent)
+    def __init__(self, parent, target: PerInfo):
+        super(SpriteSplitFrame, self).__init__(parent, parent.tl)
         self.target = target
 
         self.file_list = []
@@ -49,13 +50,13 @@ class SpriteSplitFrame(DialogSpiltSprite):
             files = list(
                 filter(lambda temp_value: temp_value.endswith(end_key), files))
 
-            self.image_group, match = ImageWork.spilt_sprite(self.target, files, id_num.strip(), self.select)
+            self.image_group, match = ImageWork.split_sprite(self.target, files, id_num.strip(), self.select)
             self.file_list = list(self.image_group.keys())
 
             self.m_listBox_in_files.Set(self.file_list)
             self.m_staticText_info.SetLabel(_("Completed importing {} files ({} of which match Path_ID and were read successfully)").format(len(files), match))
         except Exception as info:
-            wx.MessageBox(_("Import Error!\n{info}"), "Error", wx.ICON_ERROR)
+            wx.MessageBox(_("Import Error!\n{}").format(info), "Error", wx.ICON_ERROR)
             return False
         else:
             return True
@@ -70,7 +71,7 @@ class SpriteSplitFrame(DialogSpiltSprite):
         show_image, size = ImageWork.pic_size_transform(target_image, self.show_size, True)
 
         ImageWork.show_in_bitmap_contain(show_image, self.m_bitmap_show)
-        self.m_staticText_info.SetLabel(_("Currently previewing [{target_name}], size: {size}"))
+        self.m_staticText_info.SetLabel(_("Currently previewing [{}], size: {}").format(target_name, size))
 
     def save_all(self, event):
         if self.is_selected:

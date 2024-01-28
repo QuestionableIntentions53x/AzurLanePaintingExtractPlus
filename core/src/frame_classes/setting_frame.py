@@ -3,25 +3,29 @@ import os
 
 import wx
 
-from core.src.frame_classes.design_frame import MyDialogSetting
+import gettext
+_ = gettext.gettext
+
+from core.src.frame_classes.design_frame import SettingWindow
 from core.src.static_classes.image_deal import ImageWork
 from core.src.static_classes.static_data import GlobalData
 from core.src.structs_classes.setting_structs import SettingHolder, PerSetting
 from .help_frame import HelpPageFrame
 from .level_setting_frame import LevelSettingFrame
+from core.src.static_classes.update_localization import NameLocalization
 
 
-class Setting(MyDialogSetting):
+class Setting(SettingWindow):
 
-    def __init__(self, parent, setting_info, work_path, names, height_setting,unnamed_value:list):
-        super(Setting, self).__init__(parent)
+    def __init__(self, parent, setting_info: dict, work_path: str, names: dict, height_setting: dict, unnamed_value: list):
+        super(Setting, self).__init__(parent, parent.tl)
         self.height_setting = height_setting
         self.names = names
         self.frame = parent
         self.setting = setting_info
         self.path = work_path
 
-        self.unamed_list=unnamed_value
+        self.unamed_list = unnamed_value
 
         self.data = GlobalData()
 
@@ -50,13 +54,22 @@ class Setting(MyDialogSetting):
 
     def set_info(self, event):
         data = self.data
-        val: PerSetting = self.setting_hold[data.sk_input_filter]
+
+        val: PerSetting = self.setting_hold[data.sk_locale]
+        val.set_link = self.m_choice_locale.SetSelection
+        val.get_link = self.m_choice_locale.GetSelection
+
+        val: PerSetting = self.setting_hold[data.sk_automatic_name_update]
+        val.set_link = self.m_checkBox_auto_name_update.SetValue
+        val.get_link = self.m_checkBox_auto_name_update.GetValue
+
+        """val: PerSetting = self.setting_hold[data.sk_input_filter]
         val.set_link = self.m_choice_inport_filter.SetSelection
         val.get_link = self.m_choice_inport_filter.GetSelection
 
         val: PerSetting = self.setting_hold[data.sk_output_group]
         val.set_link = self.m_choice_export_division.SetSelection
-        val.get_link = self.m_choice_export_division.GetSelection
+        val.get_link = self.m_choice_export_division.GetSelection"""
 
         val: PerSetting = self.setting_hold[data.sk_use_cn_name]
         val.set_link = self.m_checkBox_ex_cn.SetValue
@@ -92,6 +105,17 @@ class Setting(MyDialogSetting):
 
         self.setting_hold.initial_val()
 
+    def locale(self, event):
+        message = self.frame.tl.set_locale_from_index(self.m_choice_locale.GetSelection())
+        
+        if message != None:
+            self.frame.m_staticText_info.SetLabel(message)
+            return
+        
+        self.frame.rebuild(self.frame.tl)
+        self.rebuild(self.frame.tl)
+        self.frame.refresh_PerInfo_tree()
+
     def height_setting_dialog(self, event):
         dialog = LevelSettingFrame(self, self.height_setting, self.names, self.path,self.unamed_list,self.path)
         dialog.ShowModal()
@@ -99,8 +123,14 @@ class Setting(MyDialogSetting):
         self.height_setting = dialog.get_setting()
 
     def guider(self, event):
-        dialog = HelpPageFrame(self.path)
+        dialog = HelpPageFrame(self.path, self.frame.tl)
         dialog.Show(True)
+
+    def manual_name_update( self, event ):
+        dialog = NameLocalization(self.frame, self.setting, False)
+        dialog.ShowModal()
+        self.setting = dialog.settings
+        self.names = dialog.names
 
     def ok_press(self, event):
         self.save_info()

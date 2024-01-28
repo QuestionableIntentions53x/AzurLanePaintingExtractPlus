@@ -23,19 +23,20 @@ from .design_frame import MyDialogAddFace
 
 class FaceMatchFrame(MyDialogAddFace):
     def __init__(self, parent, target: PerInfo, type_is=True):
-        super(FaceMatchFrame, self).__init__(parent)
+        super(FaceMatchFrame, self).__init__(parent, parent.tl)
         if not type_is:
             self.SetSize(1920, 1080)
         # Target object and imported expressions
         self.type_is = type_is
         self.target = target
+        self.frame = parent
         self.input_values = {}
         self.view_list = []
         self.is_all_only = True
 
         # Generate target portrait
         self.target_img = ImageWork.az_paint_restore(target.mesh_path, target.tex_path,
-                                                     not target.get_is_able_work() and target.must_able)
+                                                     not target.get_restorable() and target.force_restorable)
         self.target_size = self.target_img.size
         # Target expression
         self.target_face = Image.Image()
@@ -146,13 +147,13 @@ class FaceMatchFrame(MyDialogAddFace):
         if value < 0:
             self.left_extend += -value
             value=0
-            self.m_staticText_info.SetLabel(_("Canvas expands {} pixels to the left").format(self.left_extend))
+            self.m_staticText_info.SetLabel(_("Canvas expanded {} pixels to the left").format(self.left_extend))
 
         # If the x coordinate point of the face drawing + the width of the target face is greater than the total width of the current canvas, extend the canvas to the right, and the x value remains unchanged
         elif value + self.target_face.width - self.bg_size[0] > 0:
             self.right_extend += (value + self.target_face.width) - self.bg_size[0]
 
-            self.m_staticText_info.SetLabel(_("Canvas extends {} pixels to the right").format(self.right_extend))
+            self.m_staticText_info.SetLabel(_("Canvas expanded {} pixels to the right").format(self.right_extend))
         
         self._pos_x = value
         self.add_face()
@@ -165,12 +166,12 @@ class FaceMatchFrame(MyDialogAddFace):
         if value < 0:
             self.top_extend += -value
             value=0
-            self.m_staticText_info.SetLabel(_("Canvas extends upward by {} pixels").format(self.top_extend))
+            self.m_staticText_info.SetLabel(_("Canvas expanded upward by {} pixels").format(self.top_extend))
 
         # If the face drawing y coordinate + the height of the target face is greater than the total height of the current canvas, the canvas will extend downward and the y value will remain unchanged.
         elif value + self.target_face.height - self.bg_size[1] > 0:
             self.button_extend = value + self.target_face.height - self.bg_size[1]
-            self.m_staticText_info.SetLabel(_("Canvas extends downward by {} pixels").format(self.button_extend))
+            self.m_staticText_info.SetLabel(_("Canvas expanded downward by {} pixels").format(self.button_extend))
 
         self._pos_y = value
         self.add_face()
@@ -339,7 +340,7 @@ class FaceMatchFrame(MyDialogAddFace):
         guid = values[self.select_count]
         temp = PerInfo(f"{self.view_list[index]}-{self.select_count}",
                        f"{self.view_list[index]}-{self.select_count}",
-                       False)
+                       False, self.frame.tl)
         temp.tex_path = guid
 
         self.view_work = QuickRestore(temp, None,

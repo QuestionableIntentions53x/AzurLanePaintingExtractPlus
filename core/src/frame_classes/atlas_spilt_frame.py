@@ -15,11 +15,13 @@ from core.src.thread_classes.quick_view import QuickRestore
 
 class AtlasSpiltFrame(MyDialogAtlasSpilt):
     def __init__(self, parent, target):
-        super(AtlasSpiltFrame, self).__init__(parent)
+        super(AtlasSpiltFrame, self).__init__(parent, parent.tl)
+        self.parent = parent
         self.target: PerInfo = target
         self.atlas_path = ''
         self.items = {}
         self.names = []
+        _ = self.parent.tl.t
 
         self.show_thread: QuickRestore = ...
 
@@ -49,6 +51,7 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
         self.split_work()
 
     def view_item(self, event):
+        _ = self.parent.tl.t
         index = event.GetSelection()
         pic = self.items[self.names[index]]
         img, size = ImageWork.pic_size_transform(pic, self.bg_size, False)
@@ -60,10 +63,11 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
         self.m_staticText_info.SetLabel(_("Currently showing{}->{}").format(self.target.cn_name, self.names[index]))
 
     def save_item(self, event):
+        _ = self.parent.tl.t
         index = event.GetSelection()
         pic = self.items[self.names[index]]
 
-        self.dialog = wx.FileDialog(self, _("Save component\"{}\"").format(self.names[index]), defaultFile=_("{}.png").format(self.names[index]),
+        self.dialog = wx.FileDialog(self, _("Save component\"{}\"").format(self.names[index]), defaultFile="{}.png".format(self.names[index]),
                                     wildcard="*.png",
                                     style=wx.FD_CHANGE_DIR | wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
         if wx.ID_OK == self.dialog.ShowModal():
@@ -71,6 +75,7 @@ class AtlasSpiltFrame(MyDialogAtlasSpilt):
             pic.save(path)
 
     def save_all(self, event):
+        _ = self.parent.tl.t
         self.dialog = wx.DirDialog(self, _("Save component\"{}\"").format(self.target.cn_name),
                                    style=wx.DD_CHANGE_DIR | wx.DD_DIR_MUST_EXIST | wx.DD_NEW_DIR_BUTTON)
         if wx.ID_OK == self.dialog.ShowModal():

@@ -2,6 +2,7 @@ import functools
 import os
 import os.path as op
 import re
+import traceback
 
 import gettext
 _ = gettext.gettext
@@ -79,8 +80,8 @@ class FileFilter(object):
                 return False, _('Import failed, no items to import!')
         except Exception as info:
             #  raise
-            print(info.__traceback__)
-            return False, 'Import failed, an error occurred! %s' % info
+            print(''.join(traceback.format_tb(info.__traceback__)))
+            return False, _('Import failed, an error occurred! {}').format(info.__str__)
         else:
             return True, _('Import successful! Successfully imported {} items!').format(num)
 
